@@ -974,6 +974,10 @@ export namespace dns_v1beta2 {
     id?: string | null;
     kind?: string | null;
     /**
+     * User labels.
+     */
+    labels?: {[key: string]: string} | null;
+    /**
      * List of network names specifying networks to which this policy is applied.
      */
     networks?: Schema$ResponsePolicyNetwork[];
@@ -5993,6 +5997,7 @@ export namespace dns_v1beta2 {
      *       //   "gkeClusters": [],
      *       //   "id": "my_id",
      *       //   "kind": "my_kind",
+     *       //   "labels": {},
      *       //   "networks": [],
      *       //   "responsePolicyName": "my_responsePolicyName"
      *       // }
@@ -6006,6 +6011,7 @@ export namespace dns_v1beta2 {
      *   //   "gkeClusters": [],
      *   //   "id": "my_id",
      *   //   "kind": "my_kind",
+     *   //   "labels": {},
      *   //   "networks": [],
      *   //   "responsePolicyName": "my_responsePolicyName"
      *   // }
@@ -6277,6 +6283,7 @@ export namespace dns_v1beta2 {
      *   //   "gkeClusters": [],
      *   //   "id": "my_id",
      *   //   "kind": "my_kind",
+     *   //   "labels": {},
      *   //   "networks": [],
      *   //   "responsePolicyName": "my_responsePolicyName"
      *   // }
@@ -6566,6 +6573,7 @@ export namespace dns_v1beta2 {
      *       //   "gkeClusters": [],
      *       //   "id": "my_id",
      *       //   "kind": "my_kind",
+     *       //   "labels": {},
      *       //   "networks": [],
      *       //   "responsePolicyName": "my_responsePolicyName"
      *       // }
@@ -6725,6 +6733,7 @@ export namespace dns_v1beta2 {
      *       //   "gkeClusters": [],
      *       //   "id": "my_id",
      *       //   "kind": "my_kind",
+     *       //   "labels": {},
      *       //   "networks": [],
      *       //   "responsePolicyName": "my_responsePolicyName"
      *       // }
