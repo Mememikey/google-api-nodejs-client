@@ -205,6 +205,10 @@ import {
   containeranalysis,
 } from './containeranalysis';
 import {VERSIONS as contentVersions, content} from './content';
+import {
+  VERSIONS as contentwarehouseVersions,
+  contentwarehouse,
+} from './contentwarehouse';
 import {VERSIONS as customsearchVersions, customsearch} from './customsearch';
 import {VERSIONS as datacatalogVersions, datacatalog} from './datacatalog';
 import {VERSIONS as dataflowVersions, dataflow} from './dataflow';
@@ -685,6 +689,7 @@ export const APIS: APIList = {
   container: containerVersions,
   containeranalysis: containeranalysisVersions,
   content: contentVersions,
+  contentwarehouse: contentwarehouseVersions,
   customsearch: customsearchVersions,
   datacatalog: datacatalogVersions,
   dataflow: dataflowVersions,
@@ -939,6 +944,7 @@ export class GeneratedAPIs {
   container = container;
   containeranalysis = containeranalysis;
   content = content;
+  contentwarehouse = contentwarehouse;
   customsearch = customsearch;
   datacatalog = datacatalog;
   dataflow = dataflow;
