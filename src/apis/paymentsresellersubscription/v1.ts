@@ -380,6 +380,10 @@ export namespace paymentsresellersubscription_v1 {
      * Output only. Output Only. The duration of an introductory offer in billing cycles.
      */
     recurrenceCount?: number | null;
+    /**
+     * Output only. 2-letter ISO region code where the product is available in. Ex. "US".
+     */
+    regionCode?: string | null;
   }
   /**
    * A description of what time period or moment in time the product or service is being delivered over.
