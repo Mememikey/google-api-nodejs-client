@@ -209,6 +209,10 @@ export namespace retail_v2alpha {
      */
     gcsPath?: string | null;
     /**
+     * The detailed content which caused the error on importing an inventory activity. http://cs/google3/google/cloud/retail/v2main/inventory_activity.proto
+     */
+    inventoryActivity?: string | null;
+    /**
      * Line number of the content in file. Should be empty for permission or batch operation error.
      */
     lineNumber?: string | null;
@@ -216,6 +220,26 @@ export namespace retail_v2alpha {
      * The operation resource name of the LRO.
      */
     operationName?: string | null;
+    /**
+     * The detailed content which caused the error on importing an order. http://cs/google3/google/cloud/retail/v2main/order.proto
+     */
+    order?: string | null;
+    /**
+     * The detailed content which caused the error on importing a place. http://cs/google3/google/cloud/retail/v2main/place.proto
+     */
+    place?: string | null;
+    /**
+     * The detailed content which caused the error on importing a place asset. http://cs/google3/google/cloud/retail/v2main/place_asset.proto
+     */
+    placeAsset?: string | null;
+    /**
+     * The detailed content which caused the error on importing a place product price. http://cs/google3/google/cloud/retail/v2main/place_product_price.proto
+     */
+    placeProductPrice?: string | null;
+    /**
+     * The detailed content which caused the error on importing a place product settings. http://cs/google3/google/cloud/retail/v2main/place_product_settings.proto
+     */
+    placeProductSettings?: string | null;
     /**
      * The detailed content which caused the error on importing a product.
      */
@@ -457,7 +481,7 @@ export namespace retail_v2alpha {
    */
   export interface Schema$GoogleCloudRetailV2alphaCatalogAttribute {
     /**
-     * If DYNAMIC_FACETABLE_ENABLED, attribute values are available for dynamic facet. Could only be DYNAMIC_FACETABLE_DISABLED if CatalogAttribute.indexable_option is INDEXABLE_DISABLED. Otherwise, an INVALID_ARGUMENT error is returned.
+     * If DYNAMIC_FACETABLE_ENABLED, attribute values are available for dynamic facet. Could only be DYNAMIC_FACETABLE_DISABLED if CatalogAttribute.indexable_option is INDEXABLE_DISABLED. Otherwise, an INVALID_ARGUMENT error is returned. Must be specified, otherwise throws INVALID_FORMAT error.
      */
     dynamicFacetableOption?: string | null;
     /**
@@ -465,7 +489,7 @@ export namespace retail_v2alpha {
      */
     exactSearchableOption?: string | null;
     /**
-     * When AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, if INDEXABLE_ENABLED attribute values are indexed so that it can be filtered, faceted, or boosted in SearchService.Search.
+     * When AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, if INDEXABLE_ENABLED attribute values are indexed so that it can be filtered, faceted, or boosted in SearchService.Search. Must be specified, otherwise throws INVALID_FORMAT error.
      */
     indexableOption?: string | null;
     /**
@@ -481,7 +505,7 @@ export namespace retail_v2alpha {
      */
     recommendationsFilteringOption?: string | null;
     /**
-     * When AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, if SEARCHABLE_ENABLED, attribute values are searchable by text queries in SearchService.Search. If SEARCHABLE_ENABLED but attribute type is numerical, attribute values will not be searchable by text queries in SearchService.Search, as there are no text values associated to numerical attributes.
+     * When AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, if SEARCHABLE_ENABLED, attribute values are searchable by text queries in SearchService.Search. If SEARCHABLE_ENABLED but attribute type is numerical, attribute values will not be searchable by text queries in SearchService.Search, as there are no text values associated to numerical attributes. Must be specified, otherwise throws INVALID_FORMAT error.
      */
     searchableOption?: string | null;
     /**
@@ -1090,11 +1114,11 @@ export namespace retail_v2alpha {
     priceInfo?: Schema$GoogleCloudRetailV2alphaPriceInfo;
   }
   /**
-   * Merchant Center Feed filter criterrion.
+   * Merchant Center Feed filter criterion.
    */
   export interface Schema$GoogleCloudRetailV2alphaMerchantCenterFeedFilter {
     /**
-     * Merchant Center primary feed id.
+     * Merchant Center primary feed ID.
      */
     primaryFeedId?: string | null;
     /**
@@ -1107,7 +1131,7 @@ export namespace retail_v2alpha {
    */
   export interface Schema$GoogleCloudRetailV2alphaMerchantCenterLink {
     /**
-     * The branch id (e.g. 0/1/2) within this catalog that products from merchant_center_account_id are streamed to. When updating this field, an empty value will use the currently configured default branch. However, changing the default branch later on won't change the linked branch here. A single branch id can only have one linked merchant center account id.
+     * The branch ID (e.g. 0/1/2) within this catalog that products from merchant_center_account_id are streamed to. When updating this field, an empty value will use the currently configured default branch. However, changing the default branch later on won't change the linked branch here. A single branch ID can only have one linked merchant center account ID.
      */
     branchId?: string | null;
     /**
@@ -1123,7 +1147,7 @@ export namespace retail_v2alpha {
      */
     languageCode?: string | null;
     /**
-     * Required. The linked [Merchant center account id](https://developers.google.com/shopping-content/guides/accountstatuses). The account must be a standalone account or a sub-account of a MCA.
+     * Required. The linked [Merchant center account ID](https://developers.google.com/shopping-content/guides/accountstatuses). The account must be a standalone account or a sub-account of a MCA.
      */
     merchantCenterAccountId?: string | null;
     /**
@@ -1236,7 +1260,7 @@ export namespace retail_v2alpha {
    */
   export interface Schema$GoogleCloudRetailV2alphaModelPageOptimizationConfigPanel {
     /**
-     * Required. The candidates to consider on the panel. Limit = 10.
+     * Required. The candidates to consider on the panel.
      */
     candidates?: Schema$GoogleCloudRetailV2alphaModelPageOptimizationConfigCandidate[];
     /**
@@ -1275,7 +1299,7 @@ export namespace retail_v2alpha {
    */
   export interface Schema$GoogleCloudRetailV2alphaPredictRequest {
     /**
-     * Filter for restricting prediction results with a length limit of 5,000 characters. Accepts values for tags and the `filterOutOfStockItems` flag. * Tag expressions. Restricts predictions to products that match all of the specified tags. Boolean operators `OR` and `NOT` are supported if the expression is enclosed in parentheses, and must be separated from the tag values by a space. `-"tagA"` is also supported and is equivalent to `NOT "tagA"`. Tag values must be double quoted UTF-8 encoded strings with a size limit of 1,000 characters. Note: "Recently viewed" models don't support tag filtering at the moment. * filterOutOfStockItems. Restricts predictions to products that do not have a stockState value of OUT_OF_STOCK. Examples: * tag=("Red" OR "Blue") tag="New-Arrival" tag=(NOT "promotional") * filterOutOfStockItems tag=(-"promotional") * filterOutOfStockItems If your filter blocks all prediction results, the API will return generic (unfiltered) popular products. If you only want results strictly matching the filters, set `strictFiltering` to True in `PredictRequest.params` to receive empty results instead. Note that the API will never return items with storageStatus of "EXPIRED" or "DELETED" regardless of filter choices. If `filterSyntaxV2` is set to true under the `params` field, then attribute-based expressions are expected instead of the above described tag-based syntax. Examples: * (colors: ANY("Red", "Blue")) AND NOT (categories: ANY("Phones")) * (availability: ANY("IN_STOCK")) AND (colors: ANY("Red") OR categories: ANY("Phones"))
+     * Filter for restricting prediction results with a length limit of 5,000 characters. Accepts values for tags and the `filterOutOfStockItems` flag. * Tag expressions. Restricts predictions to products that match all of the specified tags. Boolean operators `OR` and `NOT` are supported if the expression is enclosed in parentheses, and must be separated from the tag values by a space. `-"tagA"` is also supported and is equivalent to `NOT "tagA"`. Tag values must be double quoted UTF-8 encoded strings with a size limit of 1,000 characters. Note: "Recently viewed" models don't support tag filtering at the moment. * filterOutOfStockItems. Restricts predictions to products that do not have a stockState value of OUT_OF_STOCK. Examples: * tag=("Red" OR "Blue") tag="New-Arrival" tag=(NOT "promotional") * filterOutOfStockItems tag=(-"promotional") * filterOutOfStockItems If your filter blocks all prediction results, the API will return *no* results. If instead you want empty result sets to return generic (unfiltered) popular products, set `strictFiltering` to False in `PredictRequest.params`. Note that the API will never return items with storageStatus of "EXPIRED" or "DELETED" regardless of filter choices. If `filterSyntaxV2` is set to true under the `params` field, then attribute-based expressions are expected instead of the above described tag-based syntax. Examples: * (colors: ANY("Red", "Blue")) AND NOT (categories: ANY("Phones")) * (availability: ANY("IN_STOCK")) AND (colors: ANY("Red") OR categories: ANY("Phones"))
      */
     filter?: string | null;
     /**
