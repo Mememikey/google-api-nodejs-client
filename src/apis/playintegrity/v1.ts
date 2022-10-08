@@ -125,9 +125,22 @@ export namespace playintegrity_v1 {
   }
 
   /**
+   * Contains a signal helping apps differentiating between likely genuine users and likely non-genuine traffic (such as accounts being used for fraud, accounts used by automated traffic, or accounts used in device farms) based on the presence and volume of Play store activity.
+   */
+  export interface Schema$AccountActivity {
+    /**
+     * Required. Indicates the activity level of the account.
+     */
+    activityLevel?: string | null;
+  }
+  /**
    * Contains the account information such as the licensing status for the user in the scope.
    */
   export interface Schema$AccountDetails {
+    /**
+     * Details about the account activity for the user in the scope.
+     */
+    accountActivity?: Schema$AccountActivity;
     /**
      * Details about the account risk for the user in the scope. This feature is available only to selected developers.
      */
