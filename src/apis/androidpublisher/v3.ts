@@ -276,6 +276,10 @@ export namespace androidpublisher_v3 {
      */
     legacyCompatible?: boolean | null;
     /**
+     * Subscription offer id which is legacy compatible. The backward compatible subscription offer is returned by the Google Play Billing Library deprecated method querySkuDetailsAsync(). Only one subscription offer can be marked as legacy compatible for a given renewing base plan. To have no Subscription offer as legacy compatible set this field as empty string.
+     */
+    legacyCompatibleSubscriptionOfferId?: string | null;
+    /**
      * The proration mode for the base plan determines what happens when a user switches to this plan from another base plan. If unspecified, defaults to CHARGE_ON_NEXT_BILLING_DATE.
      */
     prorationMode?: string | null;
@@ -1341,7 +1345,7 @@ export namespace androidpublisher_v3 {
    */
   export interface Schema$PrepaidPlan {
     /**
-     * After this time, the subscription is allowed for a new top-up purchase. Not present if the subscription is already extended by a top-up purchase.
+     * If present, this is the time after which top up purchases are allowed for the prepaid plan. Will not be present for expired prepaid plans.
      */
     allowExtendAfterTime?: string | null;
   }
