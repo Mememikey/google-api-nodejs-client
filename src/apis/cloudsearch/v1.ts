@@ -2039,6 +2039,7 @@ export namespace cloudsearch_v1 {
    * Bot-specific profile information.
    */
   export interface Schema$BotInfo {
+    appAllowlistStatus?: string | null;
     /**
      * Identifier of the application associated with the bot.
      */
@@ -2072,10 +2073,13 @@ export namespace cloudsearch_v1 {
      */
     supportedUses?: string[] | null;
     /**
+     * If the app supports a home screen.
+     */
+    supportHomeScreen?: boolean | null;
+    /**
      * Urls with additional information related to the bot. This field should always be set even if all the fields within it are empty, so that it is convenient for clients to work with this field in javascript.
      */
     supportUrls?: Schema$SupportUrls;
-    whitelistStatus?: string | null;
   }
   /**
    * Information about a bot response, branched from shared/bot_response.proto without frontend User proto as we never store it.
@@ -2261,10 +2265,6 @@ export namespace cloudsearch_v1 {
      * Indicates whether the present lock is currently on or off.
      */
     presentLock?: boolean | null;
-    /**
-     * Indicates whether project Dino is currently on or off. WARNING: This is currently an experimental field. It should not be used without getting an explicit review and approval from the Meet team.
-     */
-    projectDinoEnabled?: boolean | null;
     /**
      * Indicates whether the reactions lock is currently on or off.
      */
@@ -5596,7 +5596,7 @@ export namespace cloudsearch_v1 {
      */
     isSuggestable?: boolean | null;
     /**
-     * Indicates that users can perform wildcard search for this property. Only supported for Text properties. IsReturnable must be true to set this option. In a given datasource maximum of 5 properties can be marked as is_wildcard_searchable.
+     * Indicates that users can perform wildcard search for this property. Only supported for Text properties. IsReturnable must be true to set this option. In a given datasource maximum of 5 properties can be marked as is_wildcard_searchable. For more details, see [Define object properties](https://developers.google.com/cloud-search/docs/guides/schema-guide#properties)
      */
     isWildcardSearchable?: boolean | null;
     /**
@@ -5844,9 +5844,17 @@ export namespace cloudsearch_v1 {
      */
     botAttachmentState?: string | null;
     /**
+     * Output only. Time when the quoted message was posted in microseconds.
+     */
+    createTimeMicros?: string | null;
+    /**
      * Output only. ID of the User who posted the quoted message. This includes information to identify if the quoted message was posted by an App on behalf of a user.
      */
     creatorId?: Schema$UserId;
+    /**
+     * Output only. Time when the quoted message was last edited by a user at the time when quoting action happens. Time is in microseconds.
+     */
+    lastEditTimeMicros?: string | null;
     /**
      * The `last_update_time` of the original message when the client initiated the quote creation. This is derived from the request payload passed from clients. Used to fetch the quoted message contents at a specific time on the read path. This field is populated from storage directly.
      */
@@ -5868,7 +5876,11 @@ export namespace cloudsearch_v1 {
      */
     textBody?: string | null;
     /**
-     * Output only. Upload metadata of the quoted message. NEXT TAG: 11
+     * Output only. ID of the User who last updated (created/edited/deleted) the quoted message at the time when quoting action happens. This includes information to identify if the quoted message was posted by an App on behalf of a user.
+     */
+    updaterId?: Schema$UserId;
+    /**
+     * Output only. Upload metadata of the quoted message.
      */
     uploadMetadata?: Schema$UploadMetadata[];
   }
@@ -6584,7 +6596,7 @@ export namespace cloudsearch_v1 {
      */
     chatLock?: boolean | null;
     /**
-     * Whether meeting artifacts will be shared with co-hosts.
+     * Whether meeting artifacts will be shared with cohosts.
      */
     cohostArtifactSharingEnabled?: boolean | null;
     /**
@@ -7257,6 +7269,10 @@ export namespace cloudsearch_v1 {
      */
     debugOptions?: Schema$DebugOptions;
     source?: Schema$DataSource;
+    /**
+     * Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the source that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: name, display_name
+     */
+    updateMask?: string | null;
   }
   export interface Schema$UpdateSchemaRequest {
     /**
@@ -7371,7 +7387,7 @@ export namespace cloudsearch_v1 {
      */
     intImageWidth?: number | null;
     /**
-     * Mime type of the content (Currently mapped from Page Render Service ItemType) Note that this is not necessarily the mime type of the http resource. For example a text/html from youtube or vimeo may actually be classified as a video type. Then we shall mark it as video/x since we don't know exactly what type of video it is. NEXT TAG : 16
+     * Mime type of the content (Currently mapped from Page Render Service ItemType) Note that this is not necessarily the mime type of the http resource. For example a text/html from youtube or vimeo may actually be classified as a video type. Then we shall mark it as video/x since we don't know exactly what type of video it is.
      */
     mimeType?: string | null;
     /**
@@ -7394,6 +7410,10 @@ export namespace cloudsearch_v1 {
      * The original URL.
      */
     url?: Schema$SafeUrlProto;
+    /**
+     * NEXT TAG : 17
+     */
+    urlSource?: string | null;
   }
   /**
    * User profile information. This user is not necessarily member of a space.
@@ -7495,9 +7515,13 @@ export namespace cloudsearch_v1 {
     type?: string | null;
   }
   /**
-   * Contains info regarding the updater of an Activity Feed item. Next Id: 7
+   * Contains info regarding the updater of an Activity Feed item. Next Id: 8
    */
   export interface Schema$UserInfo {
+    /**
+     * Avatar url of the user who triggered the Drive Notification email. This field will be populated if we can extract such information from the Drive Notification email. This should only be used to fetch user avatars when updater_to_show_email is not populated. This field is not set for non-Drive Notification items.
+     */
+    driveNotificationAvatarUrl?: string | null;
     /**
      * Describes how updater_count_to_show should be used.
      */
@@ -7507,7 +7531,7 @@ export namespace cloudsearch_v1 {
      */
     updaterCountToShow?: number | null;
     /**
-     * The email of the updater for clients to show used for Gmail items.
+     * The email of the updater for clients to show used for Gmail items. For Drive Notifications, this is the email of the user who triggered the Drive Notification email. This field will be populated if we can extract such information from the Drive Notification email. This is not the actual sender of the email, as the sender is always comments-noreply@docs.google.com.
      */
     updaterToShowEmail?: string | null;
     /**
@@ -7515,7 +7539,7 @@ export namespace cloudsearch_v1 {
      */
     updaterToShowGaiaId?: string | null;
     /**
-     * The display name of the updater for clients to show used for Gmail items. This (along with the updater fields above) will be populated in the thread pipeline (http://shortn/_rPS0GCp94Y) when converting Activity Feed message attributes into client-renderable Activity Feed items.
+     * The display name of the updater for clients to show used for Gmail items. For non-Drive Notification items, this field will always be populated. If the display name cannot be found for the user, the fallback string will be the email address. For Drive Notification items, this is the name of the user who triggered the Drive notification email. This field will be populated if we can extract such information from the Drive Notification email. If the name cannot be extracted, then the email will be the fallback string, which is used as the display name text in the UI when needed. This is not the actual sender of the email, as the sender is always comments-noreply@docs.google.com.
      */
     updaterToShowName?: string | null;
     /**
@@ -12539,6 +12563,8 @@ export namespace cloudsearch_v1 {
      *     'debugOptions.enableDebugging': 'placeholder-value',
      *     // The name of the datasource resource. Format: datasources/{source_id\}. The name is ignored when creating a datasource.
      *     name: 'datasources/my-datasource',
+     *     // Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the source that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: name, display_name
+     *     updateMask: 'placeholder-value',
      *
      *     // Request body metadata
      *     requestBody: {
@@ -12698,7 +12724,8 @@ export namespace cloudsearch_v1 {
      *       // request body parameters
      *       // {
      *       //   "debugOptions": {},
-     *       //   "source": {}
+     *       //   "source": {},
+     *       //   "updateMask": "my_updateMask"
      *       // }
      *     },
      *   });
@@ -12860,6 +12887,10 @@ export namespace cloudsearch_v1 {
      * The name of the datasource resource. Format: datasources/{source_id\}. The name is ignored when creating a datasource.
      */
     name?: string;
+    /**
+     * Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the source that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: name, display_name
+     */
+    updateMask?: string;
 
     /**
      * Request body metadata
@@ -13504,6 +13535,8 @@ export namespace cloudsearch_v1 {
      *   const res = await cloudsearch.settings.searchapplications.patch({
      *     // The name of the Search Application. Format: searchapplications/{application_id\}.
      *     name: 'searchapplications/my-searchapplication',
+     *     // Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the search_application then that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: search_application.name, search_application.display_name
+     *     updateMask: 'placeholder-value',
      *
      *     // Request body metadata
      *     requestBody: {
@@ -13804,6 +13837,8 @@ export namespace cloudsearch_v1 {
      *   const res = await cloudsearch.settings.searchapplications.update({
      *     // The name of the Search Application. Format: searchapplications/{application_id\}.
      *     name: 'searchapplications/my-searchapplication',
+     *     // Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the search_application then that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: search_application.name, search_application.display_name
+     *     updateMask: 'placeholder-value',
      *
      *     // Request body metadata
      *     requestBody: {
@@ -13977,6 +14012,10 @@ export namespace cloudsearch_v1 {
      * The name of the Search Application. Format: searchapplications/{application_id\}.
      */
     name?: string;
+    /**
+     * Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the search_application then that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: search_application.name, search_application.display_name
+     */
+    updateMask?: string;
 
     /**
      * Request body metadata
@@ -14001,6 +14040,10 @@ export namespace cloudsearch_v1 {
      * The name of the Search Application. Format: searchapplications/{application_id\}.
      */
     name?: string;
+    /**
+     * Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the search_application then that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: search_application.name, search_application.display_name
+     */
+    updateMask?: string;
 
     /**
      * Request body metadata
