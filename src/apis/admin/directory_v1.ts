@@ -267,6 +267,25 @@ export namespace admin_directory_v1 {
     printers?: Schema$Printer[];
   }
   /**
+   * Request to add multiple new print servers in a batch.
+   */
+  export interface Schema$BatchCreatePrintServersRequest {
+    /**
+     * Required. A list of `PrintServer` resources to be created (max `50` per batch).
+     */
+    requests?: Schema$CreatePrintServerRequest[];
+  }
+  export interface Schema$BatchCreatePrintServersResponse {
+    /**
+     * A list of create failures. `PrintServer` IDs are not populated, as print servers were not created.
+     */
+    failures?: Schema$PrintServerFailureInfo[];
+    /**
+     * A list of successfully created print servers with their IDs populated.
+     */
+    printServers?: Schema$PrintServer[];
+  }
+  /**
    * Request for deleting existing printers in batch.
    */
   export interface Schema$BatchDeletePrintersRequest {
@@ -287,6 +306,25 @@ export namespace admin_directory_v1 {
      * A list of Printer.id that were successfully deleted.
      */
     printerIds?: string[] | null;
+  }
+  /**
+   * Request to delete multiple existing print servers in a batch.
+   */
+  export interface Schema$BatchDeletePrintServersRequest {
+    /**
+     * A list of print server IDs that should be deleted (max `100` per batch).
+     */
+    printServerIds?: string[] | null;
+  }
+  export interface Schema$BatchDeletePrintServersResponse {
+    /**
+     * A list of update failures.
+     */
+    failedPrintServers?: Schema$PrintServerFailureInfo[];
+    /**
+     * A list of print server IDs that were successfully deleted.
+     */
+    printServerIds?: string[] | null;
   }
   /**
    * Public API: Resources.buildings
@@ -785,6 +823,19 @@ export namespace admin_directory_v1 {
      */
     printer?: Schema$Printer;
   }
+  /**
+   * Request for adding a new print server.
+   */
+  export interface Schema$CreatePrintServerRequest {
+    /**
+     * Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{id\}`
+     */
+    parent?: string | null;
+    /**
+     * Required. A print server to create. If you want to place the print server under a specific organizational unit (OU), then populate the `org_unit_id`. Otherwise the print server is created under the root OU. The `org_unit_id` can be retrieved using the [Directory API](https://developers.google.com/admin-sdk/directory/v1/guides/manage-org-units).
+     */
+    printServer?: Schema$PrintServer;
+  }
   export interface Schema$Customer {
     /**
      * The customer's secondary contact email address. This email address cannot be on the same domain as the `customerDomain`
@@ -1209,6 +1260,16 @@ export namespace admin_directory_v1 {
      */
     printers?: Schema$Printer[];
   }
+  export interface Schema$ListPrintServersResponse {
+    /**
+     * A token that can be sent as `page_token` in a request to retrieve the next page. If this field is omitted, there are no subsequent pages.
+     */
+    nextPageToken?: string | null;
+    /**
+     * List of print servers.
+     */
+    printServers?: Schema$PrintServer[];
+  }
   /**
    * A Google Groups member can be a user or another group. This member can be inside or outside of your account's domains. For more information about common group member tasks, see the [Developer's Guide](/admin-sdk/directory/v1/guides/manage-group-members).
    */
@@ -1613,6 +1674,60 @@ export namespace admin_directory_v1 {
      * Manufacturer. eq. "Brother"
      */
     manufacturer?: string | null;
+  }
+  /**
+   * Configuration for a print server.
+   */
+  export interface Schema$PrintServer {
+    /**
+     * Output only. Time when the print server was created.
+     */
+    createTime?: string | null;
+    /**
+     * Editable. Description of the print server (as shown in the Admin console).
+     */
+    description?: string | null;
+    /**
+     * Editable. Display name of the print server (as shown in the Admin console).
+     */
+    displayName?: string | null;
+    /**
+     * Immutable. ID of the print server. Leave empty when creating.
+     */
+    id?: string | null;
+    /**
+     * Immutable. Resource name of the print server. Leave empty when creating. Format: `customers/{customer.id\}/printServers/{print_server.id\}`
+     */
+    name?: string | null;
+    /**
+     * ID of the organization unit (OU) that owns this print server. This value can only be set when the print server is initially created. If it's not populated, the print server is placed under the root OU. The `org_unit_id` can be retrieved using the [Directory API](/admin-sdk/directory/reference/rest/v1/orgunits).
+     */
+    orgUnitId?: string | null;
+    /**
+     * Editable. Print server URI.
+     */
+    uri?: string | null;
+  }
+  /**
+   * Info about failures
+   */
+  export interface Schema$PrintServerFailureInfo {
+    /**
+     * Canonical code for why the update failed to apply.
+     */
+    errorCode?: string | null;
+    /**
+     * Failure reason message.
+     */
+    errorMessage?: string | null;
+    /**
+     * Failed print server.
+     */
+    printServer?: Schema$PrintServer;
+    /**
+     * ID of a failed print server.
+     */
+    printServerId?: string | null;
   }
   export interface Schema$Privilege {
     /**
@@ -5222,9 +5337,13 @@ export namespace admin_directory_v1 {
   export class Resource$Customers$Chrome {
     context: APIRequestContext;
     printers: Resource$Customers$Chrome$Printers;
+    printServers: Resource$Customers$Chrome$Printservers;
     constructor(context: APIRequestContext) {
       this.context = context;
       this.printers = new Resource$Customers$Chrome$Printers(this.context);
+      this.printServers = new Resource$Customers$Chrome$Printservers(
+        this.context
+      );
     }
   }
 
@@ -6517,6 +6636,1118 @@ export namespace admin_directory_v1 {
      * Request body metadata
      */
     requestBody?: Schema$Printer;
+  }
+
+  export class Resource$Customers$Chrome$Printservers {
+    context: APIRequestContext;
+    constructor(context: APIRequestContext) {
+      this.context = context;
+    }
+
+    /**
+     * Creates multiple print servers.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/admin.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const admin = google.admin('directory_v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: ['https://www.googleapis.com/auth/admin.chrome.printers'],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await admin.customers.chrome.printServers.batchCreatePrintServers(
+     *     {
+     *       // Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{id\}`
+     *       parent: 'customers/my-customer',
+     *
+     *       // Request body metadata
+     *       requestBody: {
+     *         // request body parameters
+     *         // {
+     *         //   "requests": []
+     *         // }
+     *       },
+     *     }
+     *   );
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {
+     *   //   "failures": [],
+     *   //   "printServers": []
+     *   // }
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    batchCreatePrintServers(
+      params: Params$Resource$Customers$Chrome$Printservers$Batchcreateprintservers,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    batchCreatePrintServers(
+      params?: Params$Resource$Customers$Chrome$Printservers$Batchcreateprintservers,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$BatchCreatePrintServersResponse>;
+    batchCreatePrintServers(
+      params: Params$Resource$Customers$Chrome$Printservers$Batchcreateprintservers,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    batchCreatePrintServers(
+      params: Params$Resource$Customers$Chrome$Printservers$Batchcreateprintservers,
+      options:
+        | MethodOptions
+        | BodyResponseCallback<Schema$BatchCreatePrintServersResponse>,
+      callback: BodyResponseCallback<Schema$BatchCreatePrintServersResponse>
+    ): void;
+    batchCreatePrintServers(
+      params: Params$Resource$Customers$Chrome$Printservers$Batchcreateprintservers,
+      callback: BodyResponseCallback<Schema$BatchCreatePrintServersResponse>
+    ): void;
+    batchCreatePrintServers(
+      callback: BodyResponseCallback<Schema$BatchCreatePrintServersResponse>
+    ): void;
+    batchCreatePrintServers(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Chrome$Printservers$Batchcreateprintservers
+        | BodyResponseCallback<Schema$BatchCreatePrintServersResponse>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$BatchCreatePrintServersResponse>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$BatchCreatePrintServersResponse>
+        | BodyResponseCallback<Readable>
+    ):
+      | void
+      | GaxiosPromise<Schema$BatchCreatePrintServersResponse>
+      | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Chrome$Printservers$Batchcreateprintservers;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params =
+          {} as Params$Resource$Customers$Chrome$Printservers$Batchcreateprintservers;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://admin.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (
+              rootUrl +
+              '/admin/directory/v1/{+parent}/chrome/printServers:batchCreatePrintServers'
+            ).replace(/([^:]\/)\/+/g, '$1'),
+            method: 'POST',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['parent'],
+        pathParams: ['parent'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$BatchCreatePrintServersResponse>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$BatchCreatePrintServersResponse>(
+          parameters
+        );
+      }
+    }
+
+    /**
+     * Deletes multiple print servers.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/admin.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const admin = google.admin('directory_v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: ['https://www.googleapis.com/auth/admin.chrome.printers'],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await admin.customers.chrome.printServers.batchDeletePrintServers(
+     *     {
+     *       // Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{customer.id\}`
+     *       parent: 'customers/my-customer',
+     *
+     *       // Request body metadata
+     *       requestBody: {
+     *         // request body parameters
+     *         // {
+     *         //   "printServerIds": []
+     *         // }
+     *       },
+     *     }
+     *   );
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {
+     *   //   "failedPrintServers": [],
+     *   //   "printServerIds": []
+     *   // }
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    batchDeletePrintServers(
+      params: Params$Resource$Customers$Chrome$Printservers$Batchdeleteprintservers,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    batchDeletePrintServers(
+      params?: Params$Resource$Customers$Chrome$Printservers$Batchdeleteprintservers,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$BatchDeletePrintServersResponse>;
+    batchDeletePrintServers(
+      params: Params$Resource$Customers$Chrome$Printservers$Batchdeleteprintservers,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    batchDeletePrintServers(
+      params: Params$Resource$Customers$Chrome$Printservers$Batchdeleteprintservers,
+      options:
+        | MethodOptions
+        | BodyResponseCallback<Schema$BatchDeletePrintServersResponse>,
+      callback: BodyResponseCallback<Schema$BatchDeletePrintServersResponse>
+    ): void;
+    batchDeletePrintServers(
+      params: Params$Resource$Customers$Chrome$Printservers$Batchdeleteprintservers,
+      callback: BodyResponseCallback<Schema$BatchDeletePrintServersResponse>
+    ): void;
+    batchDeletePrintServers(
+      callback: BodyResponseCallback<Schema$BatchDeletePrintServersResponse>
+    ): void;
+    batchDeletePrintServers(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Chrome$Printservers$Batchdeleteprintservers
+        | BodyResponseCallback<Schema$BatchDeletePrintServersResponse>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$BatchDeletePrintServersResponse>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$BatchDeletePrintServersResponse>
+        | BodyResponseCallback<Readable>
+    ):
+      | void
+      | GaxiosPromise<Schema$BatchDeletePrintServersResponse>
+      | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Chrome$Printservers$Batchdeleteprintservers;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params =
+          {} as Params$Resource$Customers$Chrome$Printservers$Batchdeleteprintservers;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://admin.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (
+              rootUrl +
+              '/admin/directory/v1/{+parent}/chrome/printServers:batchDeletePrintServers'
+            ).replace(/([^:]\/)\/+/g, '$1'),
+            method: 'POST',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['parent'],
+        pathParams: ['parent'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$BatchDeletePrintServersResponse>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$BatchDeletePrintServersResponse>(
+          parameters
+        );
+      }
+    }
+
+    /**
+     * Creates a print server.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/admin.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const admin = google.admin('directory_v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: ['https://www.googleapis.com/auth/admin.chrome.printers'],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await admin.customers.chrome.printServers.create({
+     *     // Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{id\}`
+     *     parent: 'customers/my-customer',
+     *
+     *     // Request body metadata
+     *     requestBody: {
+     *       // request body parameters
+     *       // {
+     *       //   "createTime": "my_createTime",
+     *       //   "description": "my_description",
+     *       //   "displayName": "my_displayName",
+     *       //   "id": "my_id",
+     *       //   "name": "my_name",
+     *       //   "orgUnitId": "my_orgUnitId",
+     *       //   "uri": "my_uri"
+     *       // }
+     *     },
+     *   });
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {
+     *   //   "createTime": "my_createTime",
+     *   //   "description": "my_description",
+     *   //   "displayName": "my_displayName",
+     *   //   "id": "my_id",
+     *   //   "name": "my_name",
+     *   //   "orgUnitId": "my_orgUnitId",
+     *   //   "uri": "my_uri"
+     *   // }
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    create(
+      params: Params$Resource$Customers$Chrome$Printservers$Create,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    create(
+      params?: Params$Resource$Customers$Chrome$Printservers$Create,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$PrintServer>;
+    create(
+      params: Params$Resource$Customers$Chrome$Printservers$Create,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    create(
+      params: Params$Resource$Customers$Chrome$Printservers$Create,
+      options: MethodOptions | BodyResponseCallback<Schema$PrintServer>,
+      callback: BodyResponseCallback<Schema$PrintServer>
+    ): void;
+    create(
+      params: Params$Resource$Customers$Chrome$Printservers$Create,
+      callback: BodyResponseCallback<Schema$PrintServer>
+    ): void;
+    create(callback: BodyResponseCallback<Schema$PrintServer>): void;
+    create(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Chrome$Printservers$Create
+        | BodyResponseCallback<Schema$PrintServer>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$PrintServer>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$PrintServer>
+        | BodyResponseCallback<Readable>
+    ): void | GaxiosPromise<Schema$PrintServer> | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Chrome$Printservers$Create;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params = {} as Params$Resource$Customers$Chrome$Printservers$Create;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://admin.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (
+              rootUrl + '/admin/directory/v1/{+parent}/chrome/printServers'
+            ).replace(/([^:]\/)\/+/g, '$1'),
+            method: 'POST',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['parent'],
+        pathParams: ['parent'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$PrintServer>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$PrintServer>(parameters);
+      }
+    }
+
+    /**
+     * Deletes a print server.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/admin.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const admin = google.admin('directory_v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: ['https://www.googleapis.com/auth/admin.chrome.printers'],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await admin.customers.chrome.printServers.delete({
+     *     // Required. The name of the print server to be deleted. Format: `customers/{customer.id\}/chrome/printServers/{print_server.id\}`
+     *     name: 'customers/my-customer/chrome/printServers/my-printServer',
+     *   });
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {}
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    delete(
+      params: Params$Resource$Customers$Chrome$Printservers$Delete,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    delete(
+      params?: Params$Resource$Customers$Chrome$Printservers$Delete,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$Empty>;
+    delete(
+      params: Params$Resource$Customers$Chrome$Printservers$Delete,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    delete(
+      params: Params$Resource$Customers$Chrome$Printservers$Delete,
+      options: MethodOptions | BodyResponseCallback<Schema$Empty>,
+      callback: BodyResponseCallback<Schema$Empty>
+    ): void;
+    delete(
+      params: Params$Resource$Customers$Chrome$Printservers$Delete,
+      callback: BodyResponseCallback<Schema$Empty>
+    ): void;
+    delete(callback: BodyResponseCallback<Schema$Empty>): void;
+    delete(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Chrome$Printservers$Delete
+        | BodyResponseCallback<Schema$Empty>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$Empty>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$Empty>
+        | BodyResponseCallback<Readable>
+    ): void | GaxiosPromise<Schema$Empty> | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Chrome$Printservers$Delete;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params = {} as Params$Resource$Customers$Chrome$Printservers$Delete;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://admin.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (rootUrl + '/admin/directory/v1/{+name}').replace(
+              /([^:]\/)\/+/g,
+              '$1'
+            ),
+            method: 'DELETE',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['name'],
+        pathParams: ['name'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$Empty>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$Empty>(parameters);
+      }
+    }
+
+    /**
+     * Returns a print server's configuration.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/admin.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const admin = google.admin('directory_v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: [
+     *       'https://www.googleapis.com/auth/admin.chrome.printers',
+     *       'https://www.googleapis.com/auth/admin.chrome.printers.readonly',
+     *     ],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await admin.customers.chrome.printServers.get({
+     *     // Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{id\}`
+     *     name: 'customers/my-customer/chrome/printServers/my-printServer',
+     *   });
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {
+     *   //   "createTime": "my_createTime",
+     *   //   "description": "my_description",
+     *   //   "displayName": "my_displayName",
+     *   //   "id": "my_id",
+     *   //   "name": "my_name",
+     *   //   "orgUnitId": "my_orgUnitId",
+     *   //   "uri": "my_uri"
+     *   // }
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    get(
+      params: Params$Resource$Customers$Chrome$Printservers$Get,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    get(
+      params?: Params$Resource$Customers$Chrome$Printservers$Get,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$PrintServer>;
+    get(
+      params: Params$Resource$Customers$Chrome$Printservers$Get,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    get(
+      params: Params$Resource$Customers$Chrome$Printservers$Get,
+      options: MethodOptions | BodyResponseCallback<Schema$PrintServer>,
+      callback: BodyResponseCallback<Schema$PrintServer>
+    ): void;
+    get(
+      params: Params$Resource$Customers$Chrome$Printservers$Get,
+      callback: BodyResponseCallback<Schema$PrintServer>
+    ): void;
+    get(callback: BodyResponseCallback<Schema$PrintServer>): void;
+    get(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Chrome$Printservers$Get
+        | BodyResponseCallback<Schema$PrintServer>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$PrintServer>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$PrintServer>
+        | BodyResponseCallback<Readable>
+    ): void | GaxiosPromise<Schema$PrintServer> | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Chrome$Printservers$Get;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params = {} as Params$Resource$Customers$Chrome$Printservers$Get;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://admin.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (rootUrl + '/admin/directory/v1/{+name}').replace(
+              /([^:]\/)\/+/g,
+              '$1'
+            ),
+            method: 'GET',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['name'],
+        pathParams: ['name'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$PrintServer>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$PrintServer>(parameters);
+      }
+    }
+
+    /**
+     * Lists print server configurations.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/admin.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const admin = google.admin('directory_v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: [
+     *       'https://www.googleapis.com/auth/admin.chrome.printers',
+     *       'https://www.googleapis.com/auth/admin.chrome.printers.readonly',
+     *     ],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await admin.customers.chrome.printServers.list({
+     *     // Search query in [Common Expression Language syntax](https://github.com/google/cel-spec). Supported filters are `display_name`, `description`, and `uri`. Example: `printServer.displayName=='marketing-queue'`.
+     *     filter: 'placeholder-value',
+     *     // Sort order for results. Supported values are `display_name`, `description`, or `create_time`. Default order is ascending, but descending order can be returned by appending "desc" to the `order_by` field. For instance, `orderBy=='description desc'` returns the print servers sorted by description in descending order.
+     *     orderBy: 'placeholder-value',
+     *     // If `org_unit_id` is present in the request, only print servers owned or inherited by the organizational unit (OU) are returned. If the `PrintServer` resource's `org_unit_id` matches the one in the request, the OU owns the server. If `org_unit_id` is not specified in the request, all print servers are returned or filtered against.
+     *     orgUnitId: 'placeholder-value',
+     *     // The maximum number of objects to return (default `100`, max `100`). The service might return fewer than this value.
+     *     pageSize: 'placeholder-value',
+     *     // A generated token to paginate results (the `next_page_token` from a previous call).
+     *     pageToken: 'placeholder-value',
+     *     // Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{id\}`
+     *     parent: 'customers/my-customer',
+     *   });
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {
+     *   //   "nextPageToken": "my_nextPageToken",
+     *   //   "printServers": []
+     *   // }
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    list(
+      params: Params$Resource$Customers$Chrome$Printservers$List,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    list(
+      params?: Params$Resource$Customers$Chrome$Printservers$List,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$ListPrintServersResponse>;
+    list(
+      params: Params$Resource$Customers$Chrome$Printservers$List,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    list(
+      params: Params$Resource$Customers$Chrome$Printservers$List,
+      options:
+        | MethodOptions
+        | BodyResponseCallback<Schema$ListPrintServersResponse>,
+      callback: BodyResponseCallback<Schema$ListPrintServersResponse>
+    ): void;
+    list(
+      params: Params$Resource$Customers$Chrome$Printservers$List,
+      callback: BodyResponseCallback<Schema$ListPrintServersResponse>
+    ): void;
+    list(callback: BodyResponseCallback<Schema$ListPrintServersResponse>): void;
+    list(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Chrome$Printservers$List
+        | BodyResponseCallback<Schema$ListPrintServersResponse>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$ListPrintServersResponse>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$ListPrintServersResponse>
+        | BodyResponseCallback<Readable>
+    ):
+      | void
+      | GaxiosPromise<Schema$ListPrintServersResponse>
+      | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Chrome$Printservers$List;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params = {} as Params$Resource$Customers$Chrome$Printservers$List;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://admin.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (
+              rootUrl + '/admin/directory/v1/{+parent}/chrome/printServers'
+            ).replace(/([^:]\/)\/+/g, '$1'),
+            method: 'GET',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['parent'],
+        pathParams: ['parent'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$ListPrintServersResponse>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$ListPrintServersResponse>(parameters);
+      }
+    }
+
+    /**
+     * Updates a print server's configuration.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/admin.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const admin = google.admin('directory_v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: ['https://www.googleapis.com/auth/admin.chrome.printers'],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await admin.customers.chrome.printServers.patch({
+     *     // Immutable. Resource name of the print server. Leave empty when creating. Format: `customers/{customer.id\}/printServers/{print_server.id\}`
+     *     name: 'customers/my-customer/chrome/printServers/my-printServer',
+     *     // The list of fields to update. Some fields are read-only and cannot be updated. Values for unspecified fields are patched.
+     *     updateMask: 'placeholder-value',
+     *
+     *     // Request body metadata
+     *     requestBody: {
+     *       // request body parameters
+     *       // {
+     *       //   "createTime": "my_createTime",
+     *       //   "description": "my_description",
+     *       //   "displayName": "my_displayName",
+     *       //   "id": "my_id",
+     *       //   "name": "my_name",
+     *       //   "orgUnitId": "my_orgUnitId",
+     *       //   "uri": "my_uri"
+     *       // }
+     *     },
+     *   });
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {
+     *   //   "createTime": "my_createTime",
+     *   //   "description": "my_description",
+     *   //   "displayName": "my_displayName",
+     *   //   "id": "my_id",
+     *   //   "name": "my_name",
+     *   //   "orgUnitId": "my_orgUnitId",
+     *   //   "uri": "my_uri"
+     *   // }
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    patch(
+      params: Params$Resource$Customers$Chrome$Printservers$Patch,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    patch(
+      params?: Params$Resource$Customers$Chrome$Printservers$Patch,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$PrintServer>;
+    patch(
+      params: Params$Resource$Customers$Chrome$Printservers$Patch,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    patch(
+      params: Params$Resource$Customers$Chrome$Printservers$Patch,
+      options: MethodOptions | BodyResponseCallback<Schema$PrintServer>,
+      callback: BodyResponseCallback<Schema$PrintServer>
+    ): void;
+    patch(
+      params: Params$Resource$Customers$Chrome$Printservers$Patch,
+      callback: BodyResponseCallback<Schema$PrintServer>
+    ): void;
+    patch(callback: BodyResponseCallback<Schema$PrintServer>): void;
+    patch(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Chrome$Printservers$Patch
+        | BodyResponseCallback<Schema$PrintServer>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$PrintServer>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$PrintServer>
+        | BodyResponseCallback<Readable>
+    ): void | GaxiosPromise<Schema$PrintServer> | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Chrome$Printservers$Patch;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params = {} as Params$Resource$Customers$Chrome$Printservers$Patch;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://admin.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (rootUrl + '/admin/directory/v1/{+name}').replace(
+              /([^:]\/)\/+/g,
+              '$1'
+            ),
+            method: 'PATCH',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['name'],
+        pathParams: ['name'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$PrintServer>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$PrintServer>(parameters);
+      }
+    }
+  }
+
+  export interface Params$Resource$Customers$Chrome$Printservers$Batchcreateprintservers
+    extends StandardParameters {
+    /**
+     * Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{id\}`
+     */
+    parent?: string;
+
+    /**
+     * Request body metadata
+     */
+    requestBody?: Schema$BatchCreatePrintServersRequest;
+  }
+  export interface Params$Resource$Customers$Chrome$Printservers$Batchdeleteprintservers
+    extends StandardParameters {
+    /**
+     * Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{customer.id\}`
+     */
+    parent?: string;
+
+    /**
+     * Request body metadata
+     */
+    requestBody?: Schema$BatchDeletePrintServersRequest;
+  }
+  export interface Params$Resource$Customers$Chrome$Printservers$Create
+    extends StandardParameters {
+    /**
+     * Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{id\}`
+     */
+    parent?: string;
+
+    /**
+     * Request body metadata
+     */
+    requestBody?: Schema$PrintServer;
+  }
+  export interface Params$Resource$Customers$Chrome$Printservers$Delete
+    extends StandardParameters {
+    /**
+     * Required. The name of the print server to be deleted. Format: `customers/{customer.id\}/chrome/printServers/{print_server.id\}`
+     */
+    name?: string;
+  }
+  export interface Params$Resource$Customers$Chrome$Printservers$Get
+    extends StandardParameters {
+    /**
+     * Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{id\}`
+     */
+    name?: string;
+  }
+  export interface Params$Resource$Customers$Chrome$Printservers$List
+    extends StandardParameters {
+    /**
+     * Search query in [Common Expression Language syntax](https://github.com/google/cel-spec). Supported filters are `display_name`, `description`, and `uri`. Example: `printServer.displayName=='marketing-queue'`.
+     */
+    filter?: string;
+    /**
+     * Sort order for results. Supported values are `display_name`, `description`, or `create_time`. Default order is ascending, but descending order can be returned by appending "desc" to the `order_by` field. For instance, `orderBy=='description desc'` returns the print servers sorted by description in descending order.
+     */
+    orderBy?: string;
+    /**
+     * If `org_unit_id` is present in the request, only print servers owned or inherited by the organizational unit (OU) are returned. If the `PrintServer` resource's `org_unit_id` matches the one in the request, the OU owns the server. If `org_unit_id` is not specified in the request, all print servers are returned or filtered against.
+     */
+    orgUnitId?: string;
+    /**
+     * The maximum number of objects to return (default `100`, max `100`). The service might return fewer than this value.
+     */
+    pageSize?: number;
+    /**
+     * A generated token to paginate results (the `next_page_token` from a previous call).
+     */
+    pageToken?: string;
+    /**
+     * Required. The [unique ID](https://developers.google.com/admin-sdk/directory/reference/rest/v1/customers) of the customer's Google Workspace account. Format: `customers/{id\}`
+     */
+    parent?: string;
+  }
+  export interface Params$Resource$Customers$Chrome$Printservers$Patch
+    extends StandardParameters {
+    /**
+     * Immutable. Resource name of the print server. Leave empty when creating. Format: `customers/{customer.id\}/printServers/{print_server.id\}`
+     */
+    name?: string;
+    /**
+     * The list of fields to update. Some fields are read-only and cannot be updated. Values for unspecified fields are patched.
+     */
+    updateMask?: string;
+
+    /**
+     * Request body metadata
+     */
+    requestBody?: Schema$PrintServer;
   }
 
   export class Resource$Domainaliases {
