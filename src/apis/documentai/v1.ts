@@ -877,7 +877,7 @@ export namespace documentai_v1 {
      */
     mentionId?: string | null;
     /**
-     * Optional. Text value in the document e.g. `1600 Amphitheatre Pkwy`. If the entity is not present in the document, this field will be empty.
+     * Optional. Text value of the entity e.g. `1600 Amphitheatre Pkwy`.
      */
     mentionText?: string | null;
     /**
@@ -991,6 +991,10 @@ export namespace documentai_v1 {
      * Rendered image for this page. This image is preprocessed to remove any skew, rotation, and distortions such that the annotation bounding boxes can be upright and axis-aligned.
      */
     image?: Schema$GoogleCloudDocumentaiV1beta1DocumentPageImage;
+    /**
+     * Image Quality Scores.
+     */
+    imageQualityScores?: Schema$GoogleCloudDocumentaiV1beta1DocumentPageImageQualityScores;
     /**
      * Layout for the page.
      */
@@ -1183,6 +1187,32 @@ export namespace documentai_v1 {
      * Width of the image in pixels.
      */
     width?: number | null;
+  }
+  /**
+   * Image Quality Scores for the page image
+   */
+  export interface Schema$GoogleCloudDocumentaiV1beta1DocumentPageImageQualityScores {
+    /**
+     * A list of detected defects.
+     */
+    detectedDefects?: Schema$GoogleCloudDocumentaiV1beta1DocumentPageImageQualityScoresDetectedDefect[];
+    /**
+     * The overall quality score. Range [0, 1] where 1 is perfect quality.
+     */
+    qualityScore?: number | null;
+  }
+  /**
+   * Image Quality Defects
+   */
+  export interface Schema$GoogleCloudDocumentaiV1beta1DocumentPageImageQualityScoresDetectedDefect {
+    /**
+     * Confidence of detected defect. Range [0, 1] where 1 indicates strong confidence of that the defect exists.
+     */
+    confidence?: number | null;
+    /**
+     * Name of the defect type. Supported values are "quality/defect_blurry", "quality/defect_noisy", "quality/defect_dark", "quality/defect_faint", "quality/defect_text_too_small", "quality/defect_document_cutoff", "quality/defect_text_cutoff", "quality/defect_glare"
+     */
+    type?: string | null;
   }
   /**
    * Visual element describing a layout unit on a page.
@@ -1776,7 +1806,7 @@ export namespace documentai_v1 {
      */
     mentionId?: string | null;
     /**
-     * Optional. Text value in the document e.g. `1600 Amphitheatre Pkwy`. If the entity is not present in the document, this field will be empty.
+     * Optional. Text value of the entity e.g. `1600 Amphitheatre Pkwy`.
      */
     mentionText?: string | null;
     /**
@@ -1907,6 +1937,10 @@ export namespace documentai_v1 {
      * Rendered image for this page. This image is preprocessed to remove any skew, rotation, and distortions such that the annotation bounding boxes can be upright and axis-aligned.
      */
     image?: Schema$GoogleCloudDocumentaiV1beta2DocumentPageImage;
+    /**
+     * Image Quality Scores.
+     */
+    imageQualityScores?: Schema$GoogleCloudDocumentaiV1beta2DocumentPageImageQualityScores;
     /**
      * Layout for the page.
      */
@@ -2099,6 +2133,32 @@ export namespace documentai_v1 {
      * Width of the image in pixels.
      */
     width?: number | null;
+  }
+  /**
+   * Image Quality Scores for the page image
+   */
+  export interface Schema$GoogleCloudDocumentaiV1beta2DocumentPageImageQualityScores {
+    /**
+     * A list of detected defects.
+     */
+    detectedDefects?: Schema$GoogleCloudDocumentaiV1beta2DocumentPageImageQualityScoresDetectedDefect[];
+    /**
+     * The overall quality score. Range [0, 1] where 1 is perfect quality.
+     */
+    qualityScore?: number | null;
+  }
+  /**
+   * Image Quality Defects
+   */
+  export interface Schema$GoogleCloudDocumentaiV1beta2DocumentPageImageQualityScoresDetectedDefect {
+    /**
+     * Confidence of detected defect. Range [0, 1] where 1 indicates strong confidence of that the defect exists.
+     */
+    confidence?: number | null;
+    /**
+     * Name of the defect type. Supported values are "quality/defect_blurry", "quality/defect_noisy", "quality/defect_dark", "quality/defect_faint", "quality/defect_text_too_small", "quality/defect_document_cutoff", "quality/defect_text_cutoff", "quality/defect_glare"
+     */
+    type?: string | null;
   }
   /**
    * Visual element describing a layout unit on a page.
@@ -2968,7 +3028,7 @@ export namespace documentai_v1 {
      */
     mentionId?: string | null;
     /**
-     * Optional. Text value in the document e.g. `1600 Amphitheatre Pkwy`. If the entity is not present in the document, this field will be empty.
+     * Optional. Text value of the entity e.g. `1600 Amphitheatre Pkwy`.
      */
     mentionText?: string | null;
     /**
@@ -3068,6 +3128,10 @@ export namespace documentai_v1 {
    */
   export interface Schema$GoogleCloudDocumentaiV1DocumentOutputConfigGcsOutputConfig {
     /**
+     * Specifies which fields to include in the output documents.
+     */
+    fieldMask?: string | null;
+    /**
      * The Cloud Storage uri (a directory) of the output.
      */
     gcsUri?: string | null;
@@ -3100,6 +3164,10 @@ export namespace documentai_v1 {
      * Rendered image for this page. This image is preprocessed to remove any skew, rotation, and distortions such that the annotation bounding boxes can be upright and axis-aligned.
      */
     image?: Schema$GoogleCloudDocumentaiV1DocumentPageImage;
+    /**
+     * Image Quality Scores.
+     */
+    imageQualityScores?: Schema$GoogleCloudDocumentaiV1DocumentPageImageQualityScores;
     /**
      * Layout for the page.
      */
@@ -3292,6 +3360,32 @@ export namespace documentai_v1 {
      * Width of the image in pixels.
      */
     width?: number | null;
+  }
+  /**
+   * Image Quality Scores for the page image
+   */
+  export interface Schema$GoogleCloudDocumentaiV1DocumentPageImageQualityScores {
+    /**
+     * A list of detected defects.
+     */
+    detectedDefects?: Schema$GoogleCloudDocumentaiV1DocumentPageImageQualityScoresDetectedDefect[];
+    /**
+     * The overall quality score. Range [0, 1] where 1 is perfect quality.
+     */
+    qualityScore?: number | null;
+  }
+  /**
+   * Image Quality Defects
+   */
+  export interface Schema$GoogleCloudDocumentaiV1DocumentPageImageQualityScoresDetectedDefect {
+    /**
+     * Confidence of detected defect. Range [0, 1] where 1 indicates strong confidence of that the defect exists.
+     */
+    confidence?: number | null;
+    /**
+     * Name of the defect type. Supported values are "quality/defect_blurry", "quality/defect_noisy", "quality/defect_dark", "quality/defect_faint", "quality/defect_text_too_small", "quality/defect_document_cutoff", "quality/defect_text_cutoff", "quality/defect_glare"
+     */
+    type?: string | null;
   }
   /**
    * Visual element describing a layout unit on a page.
@@ -3808,10 +3902,6 @@ export namespace documentai_v1 {
      * Whether the entity type should be considered as "inactive".
      */
     inactive?: boolean | null;
-    /**
-     * If set, the properties of this entity type must be prefixed with the parents.
-     */
-    prefixedNamingOnProperties?: boolean | null;
   }
   /**
    * Response message for fetch processor types.
