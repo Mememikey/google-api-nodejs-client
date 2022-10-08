@@ -204,6 +204,10 @@ export namespace run_v2 {
      */
     image?: string | null;
     /**
+     * Periodic probe of container liveness. Container will be restarted if the probe fails. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+     */
+    livenessProbe?: Schema$GoogleCloudRunV2Probe;
+    /**
      * Name of the container specified as a DNS_LABEL.
      */
     name?: string | null;
@@ -215,6 +219,10 @@ export namespace run_v2 {
      * Compute Resource requirements by this container. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
      */
     resources?: Schema$GoogleCloudRunV2ResourceRequirements;
+    /**
+     * Startup probe of application within the container. All other probes are disabled if a startup probe is provided, until it succeeds. Container will not be added to service endpoints if the probe fails. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+     */
+    startupProbe?: Schema$GoogleCloudRunV2Probe;
     /**
      * Volume to mount into the container's filesystem.
      */
@@ -403,6 +411,53 @@ export namespace run_v2 {
     template?: Schema$GoogleCloudRunV2TaskTemplate;
   }
   /**
+   * GRPCAction describes an action involving a GRPC port.
+   */
+  export interface Schema$GoogleCloudRunV2GRPCAction {
+    /**
+     * Port number of the gRPC service. Number must be in the range 1 to 65535.
+     */
+    port?: number | null;
+    /**
+     * Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+     */
+    service?: string | null;
+  }
+  /**
+   * HTTPGetAction describes an action based on HTTP Get requests.
+   */
+  export interface Schema$GoogleCloudRunV2HTTPGetAction {
+    /**
+     * Host name to connect to, defaults to the pod IP. You probably want to set "Host" in httpHeaders instead.
+     */
+    host?: string | null;
+    /**
+     * Custom headers to set in the request. HTTP allows repeated headers.
+     */
+    httpHeaders?: Schema$GoogleCloudRunV2HTTPHeader[];
+    /**
+     * Path to access on the HTTP server. Defaults to '/'.
+     */
+    path?: string | null;
+    /**
+     * Scheme to use for connecting to the host. Defaults to HTTP.
+     */
+    scheme?: string | null;
+  }
+  /**
+   * HTTPHeader describes a custom header to be used in HTTP probes
+   */
+  export interface Schema$GoogleCloudRunV2HTTPHeader {
+    /**
+     * Required. The header field name
+     */
+    name?: string | null;
+    /**
+     * Required. The header field value
+     */
+    value?: string | null;
+  }
+  /**
    * Job represents the configuration of a single job. A job an immutable resource that references a container image which is run to completion.
    */
   export interface Schema$GoogleCloudRunV2Job {
@@ -563,6 +618,39 @@ export namespace run_v2 {
      * The resulting list of Tasks.
      */
     tasks?: Schema$GoogleCloudRunV2Task[];
+  }
+  /**
+   * Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic.
+   */
+  export interface Schema$GoogleCloudRunV2Probe {
+    /**
+     * Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.
+     */
+    failureThreshold?: number | null;
+    /**
+     * GRPC specifies an action involving a GRPC port. Exactly one of HTTPGet, TCPSocket, or GRPC must be specified.
+     */
+    grpc?: Schema$GoogleCloudRunV2GRPCAction;
+    /**
+     * HTTPGet specifies the http request to perform. Exactly one of HTTPGet, TCPSocket, or gRPC must be specified.
+     */
+    httpGet?: Schema$GoogleCloudRunV2HTTPGetAction;
+    /**
+     * Number of seconds after the container has started before the probe is initiated. Defaults to 0 seconds. Minimum value is 0. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+     */
+    initialDelaySeconds?: number | null;
+    /**
+     * How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. Must be greater or equal than timeout_seconds.
+     */
+    periodSeconds?: number | null;
+    /**
+     * TCPSocket specifies an action involving a TCP port. Exactly one of HTTPGet, TCPSocket, or gRPC must be specified. TCP hooks not yet supported
+     */
+    tcpSocket?: Schema$GoogleCloudRunV2TCPSocketAction;
+    /**
+     * Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. Maximum value is 3600. Must be smaller than period_seconds. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+     */
+    timeoutSeconds?: number | null;
   }
   /**
    * ResourceRequirements describes the compute resource requirements.
@@ -1078,6 +1166,19 @@ export namespace run_v2 {
      * VPC Access configuration to use for this Task. For more information, visit https://cloud.google.com/run/docs/configuring/connecting-vpc.
      */
     vpcAccess?: Schema$GoogleCloudRunV2VpcAccess;
+  }
+  /**
+   * TCPSocketAction describes an action based on opening a socket
+   */
+  export interface Schema$GoogleCloudRunV2TCPSocketAction {
+    /**
+     * Host name to connect to, defaults to the pod IP.
+     */
+    host?: string | null;
+    /**
+     * Number or name of the port to access on the container. Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME. This field is currently limited to integer types only because of proto's inability to properly support the IntOrString golang type.
+     */
+    port?: number | null;
   }
   /**
    * Holds a single traffic routing entry for the Service. Allocations can be done to a specific Revision name, or pointing to the latest Ready Revision.

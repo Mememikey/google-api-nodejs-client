@@ -335,7 +335,7 @@ export namespace run_v1 {
      */
     imagePullPolicy?: string | null;
     /**
-     * Not supported by Cloud Run.
+     * Periodic probe of container liveness. Container will be restarted if the probe fails. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
      */
     livenessProbe?: Schema$Probe;
     /**
