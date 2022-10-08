@@ -1710,6 +1710,10 @@ export namespace dlp_v2 {
    */
   export interface Schema$GooglePrivacyDlpV2InfoTypeSummary {
     /**
+     * Not populated for predicted infotypes.
+     */
+    estimatedPrevalence?: number | null;
+    /**
      * The infoType.
      */
     infoType?: Schema$GooglePrivacyDlpV2InfoType;
