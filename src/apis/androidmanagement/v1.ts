@@ -2079,7 +2079,7 @@ export namespace androidmanagement_v1 {
      */
     installUnknownSourcesAllowed?: boolean | null;
     /**
-     * Whether the keyguard is disabled.
+     * If true, this disables the Lock Screen (https://source.android.com/docs/core/display/multi_display/lock-screen) for primary and/or secondary displays.
      */
     keyguardDisabled?: boolean | null;
     /**
