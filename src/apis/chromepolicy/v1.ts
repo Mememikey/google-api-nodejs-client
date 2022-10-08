@@ -141,19 +141,6 @@ export namespace chromepolicy_v1 {
     policyApiLifecycleStage?: string | null;
   }
   /**
-   * Additional key names that will be used to identify the target of the policy value.
-   */
-  export interface Schema$GoogleChromePolicyV1AdditionalTargetKeyName {
-    /**
-     * Key name.
-     */
-    key?: string | null;
-    /**
-     * Key description.
-     */
-    keyDescription?: string | null;
-  }
-  /**
    * Request message for specifying that multiple policy values will be deleted.
    */
   export interface Schema$GoogleChromePolicyV1BatchDeleteGroupPoliciesRequest {
@@ -188,6 +175,78 @@ export namespace chromepolicy_v1 {
      * List of policies to modify as defined by the `requests`. All requests in the list must follow these restrictions: 1. All schemas in the list must have the same root namespace. 2. All `policyTargetKey.targetResource` values must point to an org unit resource. 3. All `policyTargetKey` values must have the same key names in the ` additionalTargetKeys`. This also means if one of the targets has an empty `additionalTargetKeys` map, all of the targets must have an empty `additionalTargetKeys` map. 4. No two modification requests can reference the same `policySchema` + ` policyTargetKey` pair.
      */
     requests?: Schema$GoogleChromePolicyV1ModifyOrgUnitPolicyRequest[];
+  }
+  /**
+   * Request object for creating a certificate.
+   */
+  export interface Schema$GoogleChromePolicyV1DefineCertificateRequest {
+    /**
+     * Optional. The optional name of the certificate. If not specified, the certificate issuer will be used as the name.
+     */
+    ceritificateName?: string | null;
+    /**
+     * Required. The raw contents of the .PEM, .CRT, or .CER file.
+     */
+    certificate?: string | null;
+    /**
+     * Optional. Certificate settings within the chrome.networks.certificates namespace.
+     */
+    settings?: Schema$GoogleChromePolicyV1NetworkSetting[];
+    /**
+     * Required. The target resource on which this certificate is applied. The following resources are supported: * Organizational Unit ("orgunits/{orgunit_id\}")
+     */
+    targetResource?: string | null;
+  }
+  /**
+   * Response object for creating a certificate.
+   */
+  export interface Schema$GoogleChromePolicyV1DefineCertificateResponse {
+    /**
+     * The guid of the certificate created by the action.
+     */
+    networkId?: string | null;
+    /**
+     * the affiliated settings of the certificate (NOT IMPLEMENTED)
+     */
+    settings?: Schema$GoogleChromePolicyV1NetworkSetting[];
+    /**
+     * the resource at which the certificate is defined.
+     */
+    targetResource?: string | null;
+  }
+  /**
+   * Request object for creating a new network.
+   */
+  export interface Schema$GoogleChromePolicyV1DefineNetworkRequest {
+    /**
+     * Required. Name of the new created network.
+     */
+    name?: string | null;
+    /**
+     * Required. Detailed network settings.
+     */
+    settings?: Schema$GoogleChromePolicyV1NetworkSetting[];
+    /**
+     * Required. The target resource on which this new network will be defined. The following resources are supported: * Organizational Unit ("orgunits/{orgunit_id\}")
+     */
+    targetResource?: string | null;
+  }
+  /**
+   * Response object for creating a network.
+   */
+  export interface Schema$GoogleChromePolicyV1DefineNetworkResponse {
+    /**
+     * Network ID of the new created network.
+     */
+    networkId?: string | null;
+    /**
+     * Detailed network settings of the new created network
+     */
+    settings?: Schema$GoogleChromePolicyV1NetworkSetting[];
+    /**
+     * The target resource on which this new network will be defined. The following resources are supported: * Organizational Unit ("orgunits/{orgunit_id\}")
+     */
+    targetResource?: string | null;
   }
   /**
    * Request parameters for deleting the policy value of a specific group target.
@@ -246,19 +305,6 @@ export namespace chromepolicy_v1 {
     policyTargetKey?: Schema$GoogleChromePolicyV1PolicyTargetKey;
   }
   /**
-   * Response message for listing policy schemas that match a filter.
-   */
-  export interface Schema$GoogleChromePolicyV1ListPolicySchemasResponse {
-    /**
-     * The page token used to get the next page of policy schemas.
-     */
-    nextPageToken?: string | null;
-    /**
-     * The list of policy schemas that match the query.
-     */
-    policySchemas?: Schema$GoogleChromePolicyV1PolicySchema[];
-  }
-  /**
    * Request parameters for modifying a policy value for a specific group target.
    */
   export interface Schema$GoogleChromePolicyV1ModifyGroupPolicyRequest {
@@ -293,162 +339,30 @@ export namespace chromepolicy_v1 {
     updateMask?: string | null;
   }
   /**
-   * Resource representing a policy schema. Next ID: 14
+   * A network setting contains network configurations.
    */
-  export interface Schema$GoogleChromePolicyV1PolicySchema {
+  export interface Schema$GoogleChromePolicyV1NetworkSetting {
     /**
-     * Output only. Specific access restrictions related to this policy.
+     * The fully qualified name of the network setting.
      */
-    accessRestrictions?: string[] | null;
+    policySchema?: string | null;
     /**
-     * Output only. Additional key names that will be used to identify the target of the policy value. When specifying a `policyTargetKey`, each of the additional keys specified here will have to be included in the `additionalTargetKeys` map.
+     * The value of the network setting.
      */
-    additionalTargetKeyNames?: Schema$GoogleChromePolicyV1AdditionalTargetKeyName[];
-    /**
-     * Output only. Title of the category in which a setting belongs.
-     */
-    categoryTitle?: string | null;
-    /**
-     * Schema definition using proto descriptor.
-     */
-    definition?: Schema$Proto2FileDescriptorProto;
-    /**
-     * Output only. Detailed description of each field that is part of the schema.
-     */
-    fieldDescriptions?: Schema$GoogleChromePolicyV1PolicySchemaFieldDescription[];
-    /**
-     * Format: name=customers/{customer\}/policySchemas/{schema_namespace\}
-     */
-    name?: string | null;
-    /**
-     * Output only. Special notice messages related to setting certain values in certain fields in the schema.
-     */
-    notices?: Schema$GoogleChromePolicyV1PolicySchemaNoticeDescription[];
-    /**
-     * Output only. Current lifecycle information.
-     */
-    policyApiLifecycle?: Schema$ChromeCrosDpanelAutosettingsProtoPolicyApiLifecycle;
-    /**
-     * Deprecated field because of typo.
-     */
-    policyApiLifeycle?: Schema$ChromeCrosDpanelAutosettingsProtoPolicyApiLifecycle;
-    /**
-     * Output only. Description about the policy schema for user consumption.
-     */
-    policyDescription?: string | null;
-    /**
-     * Output only. The fully qualified name of the policy schema. This value is used to fill the field `policy_schema` in PolicyValue when calling BatchInheritOrgUnitPolicies BatchModifyOrgUnitPolicies BatchModifyGroupPolicies or BatchDeleteGroupPolicies.
-     */
-    schemaName?: string | null;
-    /**
-     * Output only. URI to related support article for this schema.
-     */
-    supportUri?: string | null;
-    /**
-     * Output only. Information about applicable target resources for the policy.
-     */
-    validTargetResources?: string[] | null;
+    value?: {[key: string]: any} | null;
   }
   /**
-   * The field and the value it must have for another field to be allowed to be set.
+   * Error information for a modification request of a specific field on a specific policy.
    */
-  export interface Schema$GoogleChromePolicyV1PolicySchemaFieldDependencies {
+  export interface Schema$GoogleChromePolicyV1PolicyModificationFieldError {
     /**
-     * The source field which this field depends on.
+     * Output only. The error message related to the field.
      */
-    sourceField?: string | null;
+    error?: string | null;
     /**
-     * The value which the source field must have for this field to be allowed to be set.
-     */
-    sourceFieldValue?: string | null;
-  }
-  /**
-   * Provides detailed information for a particular field that is part of a PolicySchema.
-   */
-  export interface Schema$GoogleChromePolicyV1PolicySchemaFieldDescription {
-    /**
-     * Deprecated. Use name and field_description instead. The description for the field.
-     */
-    description?: string | null;
-    /**
-     * Output only. The name of the field for associated with this description.
+     * Output only. The name of the field with the error.
      */
     field?: string | null;
-    /**
-     * Output only. Provides a list of fields and values. At least one of the fields must have the corresponding value in order for this field to be allowed to be set.
-     */
-    fieldDependencies?: Schema$GoogleChromePolicyV1PolicySchemaFieldDependencies[];
-    /**
-     * Output only. The description of the field.
-     */
-    fieldDescription?: string | null;
-    /**
-     * Output only. Any input constraints associated on the values for the field.
-     */
-    inputConstraint?: string | null;
-    /**
-     * Output only. If the field has a set of known values, this field will provide a description for these values.
-     */
-    knownValueDescriptions?: Schema$GoogleChromePolicyV1PolicySchemaFieldKnownValueDescription[];
-    /**
-     * Output only. The name of the field.
-     */
-    name?: string | null;
-    /**
-     * Output only. Provides the description of the fields nested in this field, if the field is a message type that defines multiple fields.
-     */
-    nestedFieldDescriptions?: Schema$GoogleChromePolicyV1PolicySchemaFieldDescription[];
-    /**
-     * Output only. Provides a list of fields that are required to be set if this field has a certain value.
-     */
-    requiredItems?: Schema$GoogleChromePolicyV1PolicySchemaRequiredItems[];
-  }
-  /**
-   * Provides detailed information about a known value that is allowed for a particular field in a PolicySchema.
-   */
-  export interface Schema$GoogleChromePolicyV1PolicySchemaFieldKnownValueDescription {
-    /**
-     * Output only. Additional description for this value.
-     */
-    description?: string | null;
-    /**
-     * Output only. The string represenstation of the value that can be set for the field.
-     */
-    value?: string | null;
-  }
-  /**
-   * Provides special notice messages related to a particular value in a field that is part of a PolicySchema.
-   */
-  export interface Schema$GoogleChromePolicyV1PolicySchemaNoticeDescription {
-    /**
-     * Output only. Whether the user needs to acknowledge the notice message before the value can be set.
-     */
-    acknowledgementRequired?: boolean | null;
-    /**
-     * Output only. The field name associated with the notice.
-     */
-    field?: string | null;
-    /**
-     * Output only. The notice message associate with the value of the field.
-     */
-    noticeMessage?: string | null;
-    /**
-     * Output only. The value of the field that has a notice. When setting the field to this value, the user may be required to acknowledge the notice message in order for the value to be set.
-     */
-    noticeValue?: string | null;
-  }
-  /**
-   * The fields that will become required based on the value of this field.
-   */
-  export interface Schema$GoogleChromePolicyV1PolicySchemaRequiredItems {
-    /**
-     * The value(s) of the field that provoke required field enforcement. An empty field_conditions implies that any value assigned to this field will provoke required field enforcement.
-     */
-    fieldConditions?: string[] | null;
-    /**
-     * The fields that are required as a consequence of the field conditions.
-     */
-    requiredFields?: string[] | null;
   }
   /**
    * The key used to identify the target on which the policy will be applied.
@@ -476,6 +390,40 @@ export namespace chromepolicy_v1 {
      */
     value?: {[key: string]: any} | null;
   }
+  /**
+   * Request object for removing a certificate.
+   */
+  export interface Schema$GoogleChromePolicyV1RemoveCertificateRequest {
+    /**
+     * Required. The GUID of the certificate to remove.
+     */
+    networkId?: string | null;
+    /**
+     * Required. The target resource on which this certificate will be removed. The following resources are supported: * Organizational Unit ("orgunits/{orgunit_id\}")
+     */
+    targetResource?: string | null;
+  }
+  /**
+   * Response object for removing a certificate.
+   */
+  export interface Schema$GoogleChromePolicyV1RemoveCertificateResponse {}
+  /**
+   * Request object for removing a network
+   */
+  export interface Schema$GoogleChromePolicyV1RemoveNetworkRequest {
+    /**
+     * Required. The GUID of the network to remove.
+     */
+    networkId?: string | null;
+    /**
+     * Required. The target resource on which this network will be removed. The following resources are supported: * Organizational Unit ("orgunits/{orgunit_id\}")
+     */
+    targetResource?: string | null;
+  }
+  /**
+   * Response object for removing a network.
+   */
+  export interface Schema$GoogleChromePolicyV1RemoveNetworkResponse {}
   /**
    * The resolved value of a policy for a given target.
    */
@@ -510,7 +458,7 @@ export namespace chromepolicy_v1 {
      */
     pageToken?: string | null;
     /**
-     * The schema filter to apply to the resolve request. Specify a schema name to view a particular schema, for example: chrome.users.ShowLogoutButton Wildcards are supported, but only in the leaf portion of the schema name. Wildcards cannot be used in namespace directly. Please read https://developers.google.com/chrome/policy/guides/policy-schemas for details on schema namepsaces. For example: Valid: "chrome.users.*", "chrome.users.apps.*", "chrome.printers.*" Invalid: "*", "*.users", "chrome.*", "chrome.*.apps.*"
+     * The schema filter to apply to the resolve request. Specify a schema name to view a particular schema, for example: chrome.users.ShowLogoutButton Wildcards are supported, but only in the leaf portion of the schema name. Wildcards cannot be used in namespace directly. Please read https://developers.google.com/chrome/policy/guides/policy-schemas for details on schema namespaces. For example: Valid: "chrome.users.*", "chrome.users.apps.*", "chrome.printers.*" Invalid: "*", "*.users", "chrome.*", "chrome.*.apps.*"
      */
     policySchemaFilter?: string | null;
     /**
@@ -549,7 +497,195 @@ export namespace chromepolicy_v1 {
     policyTargetKey?: Schema$GoogleChromePolicyV1PolicyTargetKey;
   }
   /**
-   * Request message for uploading a file for a policy. Next ID: 5
+   * Additional key names that will be used to identify the target of the policy value.
+   */
+  export interface Schema$GoogleChromePolicyVersionsV1AdditionalTargetKeyName {
+    /**
+     * Key name.
+     */
+    key?: string | null;
+    /**
+     * Key description.
+     */
+    keyDescription?: string | null;
+  }
+  /**
+   * Response message for listing policy schemas that match a filter.
+   */
+  export interface Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse {
+    /**
+     * The page token used to get the next page of policy schemas.
+     */
+    nextPageToken?: string | null;
+    /**
+     * The list of policy schemas that match the query.
+     */
+    policySchemas?: Schema$GoogleChromePolicyVersionsV1PolicySchema[];
+  }
+  /**
+   * Resource representing a policy schema.
+   */
+  export interface Schema$GoogleChromePolicyVersionsV1PolicySchema {
+    /**
+     * Output only. Specific access restrictions related to this policy.
+     */
+    accessRestrictions?: string[] | null;
+    /**
+     * Output only. Additional key names that will be used to identify the target of the policy value. When specifying a `policyTargetKey`, each of the additional keys specified here will have to be included in the `additionalTargetKeys` map.
+     */
+    additionalTargetKeyNames?: Schema$GoogleChromePolicyVersionsV1AdditionalTargetKeyName[];
+    /**
+     * Title of the category in which a setting belongs.
+     */
+    categoryTitle?: string | null;
+    /**
+     * Schema definition using proto descriptor.
+     */
+    definition?: Schema$Proto2FileDescriptorProto;
+    /**
+     * Output only. Detailed description of each field that is part of the schema.
+     */
+    fieldDescriptions?: Schema$GoogleChromePolicyVersionsV1PolicySchemaFieldDescription[];
+    /**
+     * Format: name=customers/{customer\}/policySchemas/{schema_namespace\}
+     */
+    name?: string | null;
+    /**
+     * Output only. Special notice messages related to setting certain values in certain fields in the schema.
+     */
+    notices?: Schema$GoogleChromePolicyVersionsV1PolicySchemaNoticeDescription[];
+    /**
+     * Output only. Current lifecycle information.
+     */
+    policyApiLifecycle?: Schema$ChromeCrosDpanelAutosettingsProtoPolicyApiLifecycle;
+    /**
+     * Deprecated field because of typo.
+     */
+    policyApiLifeycle?: Schema$ChromeCrosDpanelAutosettingsProtoPolicyApiLifecycle;
+    /**
+     * Output only. Description about the policy schema for user consumption.
+     */
+    policyDescription?: string | null;
+    /**
+     * Output only. The fully qualified name of the policy schema. This value is used to fill the field `policy_schema` in PolicyValue when calling BatchInheritOrgUnitPolicies BatchModifyOrgUnitPolicies BatchModifyGroupPolicies or BatchDeleteGroupPolicies.
+     */
+    schemaName?: string | null;
+    /**
+     * Output only. URI to related support article for this schema.
+     */
+    supportUri?: string | null;
+    /**
+     * Output only. Information about applicable target resources for the policy.
+     */
+    validTargetResources?: string[] | null;
+  }
+  /**
+   * The field and the value it must have for another field to be allowed to be set.
+   */
+  export interface Schema$GoogleChromePolicyVersionsV1PolicySchemaFieldDependencies {
+    /**
+     * The source field which this field depends on.
+     */
+    sourceField?: string | null;
+    /**
+     * The value which the source field must have for this field to be allowed to be set.
+     */
+    sourceFieldValue?: string | null;
+  }
+  /**
+   * Provides detailed information for a particular field that is part of a PolicySchema.
+   */
+  export interface Schema$GoogleChromePolicyVersionsV1PolicySchemaFieldDescription {
+    /**
+     * Output only. Client default if the policy is unset.
+     */
+    defaultValue?: any | null;
+    /**
+     * Deprecated. Use name and field_description instead. The description for the field.
+     */
+    description?: string | null;
+    /**
+     * Output only. The name of the field for associated with this description.
+     */
+    field?: string | null;
+    /**
+     * Output only. Provides a list of fields and values. At least one of the fields must have the corresponding value in order for this field to be allowed to be set.
+     */
+    fieldDependencies?: Schema$GoogleChromePolicyVersionsV1PolicySchemaFieldDependencies[];
+    /**
+     * Output only. The description of the field.
+     */
+    fieldDescription?: string | null;
+    /**
+     * Output only. Any input constraints associated on the values for the field.
+     */
+    inputConstraint?: string | null;
+    /**
+     * Output only. If the field has a set of known values, this field will provide a description for these values.
+     */
+    knownValueDescriptions?: Schema$GoogleChromePolicyVersionsV1PolicySchemaFieldKnownValueDescription[];
+    /**
+     * Output only. The name of the field.
+     */
+    name?: string | null;
+    /**
+     * Output only. Provides the description of the fields nested in this field, if the field is a message type that defines multiple fields.
+     */
+    nestedFieldDescriptions?: Schema$GoogleChromePolicyVersionsV1PolicySchemaFieldDescription[];
+    /**
+     * Output only. Provides a list of fields that are required to be set if this field has a certain value.
+     */
+    requiredItems?: Schema$GoogleChromePolicyVersionsV1PolicySchemaRequiredItems[];
+  }
+  /**
+   * Provides detailed information about a known value that is allowed for a particular field in a PolicySchema.
+   */
+  export interface Schema$GoogleChromePolicyVersionsV1PolicySchemaFieldKnownValueDescription {
+    /**
+     * Output only. Additional description for this value.
+     */
+    description?: string | null;
+    /**
+     * Output only. The string represenstation of the value that can be set for the field.
+     */
+    value?: string | null;
+  }
+  /**
+   * Provides special notice messages related to a particular value in a field that is part of a PolicySchema.
+   */
+  export interface Schema$GoogleChromePolicyVersionsV1PolicySchemaNoticeDescription {
+    /**
+     * Output only. Whether the user needs to acknowledge the notice message before the value can be set.
+     */
+    acknowledgementRequired?: boolean | null;
+    /**
+     * Output only. The field name associated with the notice.
+     */
+    field?: string | null;
+    /**
+     * Output only. The notice message associate with the value of the field.
+     */
+    noticeMessage?: string | null;
+    /**
+     * Output only. The value of the field that has a notice. When setting the field to this value, the user may be required to acknowledge the notice message in order for the value to be set.
+     */
+    noticeValue?: string | null;
+  }
+  /**
+   * The fields that will become required based on the value of this field.
+   */
+  export interface Schema$GoogleChromePolicyVersionsV1PolicySchemaRequiredItems {
+    /**
+     * The value(s) of the field that provoke required field enforcement. An empty field_conditions implies that any value assigned to this field will provoke required field enforcement.
+     */
+    fieldConditions?: string[] | null;
+    /**
+     * The fields that are required as a consequence of the field conditions.
+     */
+    requiredFields?: string[] | null;
+  }
+  /**
+   * Request message for uploading a file for a policy.
    */
   export interface Schema$GoogleChromePolicyVersionsV1UploadPolicyFileRequest {
     /**
@@ -558,7 +694,7 @@ export namespace chromepolicy_v1 {
     policyField?: string | null;
   }
   /**
-   * Response message for downloading an uploaded file. Next ID: 2
+   * Response message for downloading an uploaded file.
    */
   export interface Schema$GoogleChromePolicyVersionsV1UploadPolicyFileResponse {
     /**
@@ -686,10 +822,12 @@ export namespace chromepolicy_v1 {
   export class Resource$Customers$Policies {
     context: APIRequestContext;
     groups: Resource$Customers$Policies$Groups;
+    networks: Resource$Customers$Policies$Networks;
     orgunits: Resource$Customers$Policies$Orgunits;
     constructor(context: APIRequestContext) {
       this.context = context;
       this.groups = new Resource$Customers$Policies$Groups(this.context);
+      this.networks = new Resource$Customers$Policies$Networks(this.context);
       this.orgunits = new Resource$Customers$Policies$Orgunits(this.context);
     }
 
@@ -1492,6 +1630,653 @@ export namespace chromepolicy_v1 {
     requestBody?: Schema$GoogleChromePolicyV1UpdateGroupPriorityOrderingRequest;
   }
 
+  export class Resource$Customers$Policies$Networks {
+    context: APIRequestContext;
+    constructor(context: APIRequestContext) {
+      this.context = context;
+    }
+
+    /**
+     * Creates a certificate at a specified OU for a customer.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/chromepolicy.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const chromepolicy = google.chromepolicy('v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: ['https://www.googleapis.com/auth/chrome.management.policy'],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await chromepolicy.customers.policies.networks.defineCertificate({
+     *     // Required. The customer for which the certificate will apply.
+     *     customer: 'customers/my-customer',
+     *
+     *     // Request body metadata
+     *     requestBody: {
+     *       // request body parameters
+     *       // {
+     *       //   "ceritificateName": "my_ceritificateName",
+     *       //   "certificate": "my_certificate",
+     *       //   "settings": [],
+     *       //   "targetResource": "my_targetResource"
+     *       // }
+     *     },
+     *   });
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {
+     *   //   "networkId": "my_networkId",
+     *   //   "settings": [],
+     *   //   "targetResource": "my_targetResource"
+     *   // }
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    defineCertificate(
+      params: Params$Resource$Customers$Policies$Networks$Definecertificate,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    defineCertificate(
+      params?: Params$Resource$Customers$Policies$Networks$Definecertificate,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$GoogleChromePolicyV1DefineCertificateResponse>;
+    defineCertificate(
+      params: Params$Resource$Customers$Policies$Networks$Definecertificate,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    defineCertificate(
+      params: Params$Resource$Customers$Policies$Networks$Definecertificate,
+      options:
+        | MethodOptions
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1DefineCertificateResponse>,
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1DefineCertificateResponse>
+    ): void;
+    defineCertificate(
+      params: Params$Resource$Customers$Policies$Networks$Definecertificate,
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1DefineCertificateResponse>
+    ): void;
+    defineCertificate(
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1DefineCertificateResponse>
+    ): void;
+    defineCertificate(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Policies$Networks$Definecertificate
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1DefineCertificateResponse>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1DefineCertificateResponse>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1DefineCertificateResponse>
+        | BodyResponseCallback<Readable>
+    ):
+      | void
+      | GaxiosPromise<Schema$GoogleChromePolicyV1DefineCertificateResponse>
+      | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Policies$Networks$Definecertificate;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params =
+          {} as Params$Resource$Customers$Policies$Networks$Definecertificate;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://chromepolicy.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (
+              rootUrl + '/v1/{+customer}/policies/networks:defineCertificate'
+            ).replace(/([^:]\/)\/+/g, '$1'),
+            method: 'POST',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['customer'],
+        pathParams: ['customer'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$GoogleChromePolicyV1DefineCertificateResponse>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$GoogleChromePolicyV1DefineCertificateResponse>(
+          parameters
+        );
+      }
+    }
+
+    /**
+     * Define a new network.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/chromepolicy.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const chromepolicy = google.chromepolicy('v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: ['https://www.googleapis.com/auth/chrome.management.policy'],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await chromepolicy.customers.policies.networks.defineNetwork({
+     *     // Required. The customer who will own this new network.
+     *     customer: 'customers/my-customer',
+     *
+     *     // Request body metadata
+     *     requestBody: {
+     *       // request body parameters
+     *       // {
+     *       //   "name": "my_name",
+     *       //   "settings": [],
+     *       //   "targetResource": "my_targetResource"
+     *       // }
+     *     },
+     *   });
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {
+     *   //   "networkId": "my_networkId",
+     *   //   "settings": [],
+     *   //   "targetResource": "my_targetResource"
+     *   // }
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    defineNetwork(
+      params: Params$Resource$Customers$Policies$Networks$Definenetwork,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    defineNetwork(
+      params?: Params$Resource$Customers$Policies$Networks$Definenetwork,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$GoogleChromePolicyV1DefineNetworkResponse>;
+    defineNetwork(
+      params: Params$Resource$Customers$Policies$Networks$Definenetwork,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    defineNetwork(
+      params: Params$Resource$Customers$Policies$Networks$Definenetwork,
+      options:
+        | MethodOptions
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1DefineNetworkResponse>,
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1DefineNetworkResponse>
+    ): void;
+    defineNetwork(
+      params: Params$Resource$Customers$Policies$Networks$Definenetwork,
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1DefineNetworkResponse>
+    ): void;
+    defineNetwork(
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1DefineNetworkResponse>
+    ): void;
+    defineNetwork(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Policies$Networks$Definenetwork
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1DefineNetworkResponse>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1DefineNetworkResponse>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1DefineNetworkResponse>
+        | BodyResponseCallback<Readable>
+    ):
+      | void
+      | GaxiosPromise<Schema$GoogleChromePolicyV1DefineNetworkResponse>
+      | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Policies$Networks$Definenetwork;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params =
+          {} as Params$Resource$Customers$Policies$Networks$Definenetwork;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://chromepolicy.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (
+              rootUrl + '/v1/{+customer}/policies/networks:defineNetwork'
+            ).replace(/([^:]\/)\/+/g, '$1'),
+            method: 'POST',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['customer'],
+        pathParams: ['customer'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$GoogleChromePolicyV1DefineNetworkResponse>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$GoogleChromePolicyV1DefineNetworkResponse>(
+          parameters
+        );
+      }
+    }
+
+    /**
+     * Remove an existing certificate by guid.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/chromepolicy.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const chromepolicy = google.chromepolicy('v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: ['https://www.googleapis.com/auth/chrome.management.policy'],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await chromepolicy.customers.policies.networks.removeCertificate({
+     *     // Required. The customer whose certificate will be removed.
+     *     customer: 'customers/my-customer',
+     *
+     *     // Request body metadata
+     *     requestBody: {
+     *       // request body parameters
+     *       // {
+     *       //   "networkId": "my_networkId",
+     *       //   "targetResource": "my_targetResource"
+     *       // }
+     *     },
+     *   });
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {}
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    removeCertificate(
+      params: Params$Resource$Customers$Policies$Networks$Removecertificate,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    removeCertificate(
+      params?: Params$Resource$Customers$Policies$Networks$Removecertificate,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$GoogleChromePolicyV1RemoveCertificateResponse>;
+    removeCertificate(
+      params: Params$Resource$Customers$Policies$Networks$Removecertificate,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    removeCertificate(
+      params: Params$Resource$Customers$Policies$Networks$Removecertificate,
+      options:
+        | MethodOptions
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveCertificateResponse>,
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveCertificateResponse>
+    ): void;
+    removeCertificate(
+      params: Params$Resource$Customers$Policies$Networks$Removecertificate,
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveCertificateResponse>
+    ): void;
+    removeCertificate(
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveCertificateResponse>
+    ): void;
+    removeCertificate(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Policies$Networks$Removecertificate
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveCertificateResponse>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveCertificateResponse>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveCertificateResponse>
+        | BodyResponseCallback<Readable>
+    ):
+      | void
+      | GaxiosPromise<Schema$GoogleChromePolicyV1RemoveCertificateResponse>
+      | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Policies$Networks$Removecertificate;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params =
+          {} as Params$Resource$Customers$Policies$Networks$Removecertificate;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://chromepolicy.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (
+              rootUrl + '/v1/{+customer}/policies/networks:removeCertificate'
+            ).replace(/([^:]\/)\/+/g, '$1'),
+            method: 'POST',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['customer'],
+        pathParams: ['customer'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$GoogleChromePolicyV1RemoveCertificateResponse>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$GoogleChromePolicyV1RemoveCertificateResponse>(
+          parameters
+        );
+      }
+    }
+
+    /**
+     * Remove an existing network by guid.
+     * @example
+     * ```js
+     * // Before running the sample:
+     * // - Enable the API at:
+     * //   https://console.developers.google.com/apis/api/chromepolicy.googleapis.com
+     * // - Login into gcloud by running:
+     * //   `$ gcloud auth application-default login`
+     * // - Install the npm module by running:
+     * //   `$ npm install googleapis`
+     *
+     * const {google} = require('googleapis');
+     * const chromepolicy = google.chromepolicy('v1');
+     *
+     * async function main() {
+     *   const auth = new google.auth.GoogleAuth({
+     *     // Scopes can be specified either as an array or as a single, space-delimited string.
+     *     scopes: ['https://www.googleapis.com/auth/chrome.management.policy'],
+     *   });
+     *
+     *   // Acquire an auth client, and bind it to all future calls
+     *   const authClient = await auth.getClient();
+     *   google.options({auth: authClient});
+     *
+     *   // Do the magic
+     *   const res = await chromepolicy.customers.policies.networks.removeNetwork({
+     *     // Required. The customer whose network will be removed.
+     *     customer: 'customers/my-customer',
+     *
+     *     // Request body metadata
+     *     requestBody: {
+     *       // request body parameters
+     *       // {
+     *       //   "networkId": "my_networkId",
+     *       //   "targetResource": "my_targetResource"
+     *       // }
+     *     },
+     *   });
+     *   console.log(res.data);
+     *
+     *   // Example response
+     *   // {}
+     * }
+     *
+     * main().catch(e => {
+     *   console.error(e);
+     *   throw e;
+     * });
+     *
+     * ```
+     *
+     * @param params - Parameters for request
+     * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+     * @param callback - Optional callback that handles the response.
+     * @returns A promise if used with async/await, or void if used with a callback.
+     */
+    removeNetwork(
+      params: Params$Resource$Customers$Policies$Networks$Removenetwork,
+      options: StreamMethodOptions
+    ): GaxiosPromise<Readable>;
+    removeNetwork(
+      params?: Params$Resource$Customers$Policies$Networks$Removenetwork,
+      options?: MethodOptions
+    ): GaxiosPromise<Schema$GoogleChromePolicyV1RemoveNetworkResponse>;
+    removeNetwork(
+      params: Params$Resource$Customers$Policies$Networks$Removenetwork,
+      options: StreamMethodOptions | BodyResponseCallback<Readable>,
+      callback: BodyResponseCallback<Readable>
+    ): void;
+    removeNetwork(
+      params: Params$Resource$Customers$Policies$Networks$Removenetwork,
+      options:
+        | MethodOptions
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveNetworkResponse>,
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveNetworkResponse>
+    ): void;
+    removeNetwork(
+      params: Params$Resource$Customers$Policies$Networks$Removenetwork,
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveNetworkResponse>
+    ): void;
+    removeNetwork(
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveNetworkResponse>
+    ): void;
+    removeNetwork(
+      paramsOrCallback?:
+        | Params$Resource$Customers$Policies$Networks$Removenetwork
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveNetworkResponse>
+        | BodyResponseCallback<Readable>,
+      optionsOrCallback?:
+        | MethodOptions
+        | StreamMethodOptions
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveNetworkResponse>
+        | BodyResponseCallback<Readable>,
+      callback?:
+        | BodyResponseCallback<Schema$GoogleChromePolicyV1RemoveNetworkResponse>
+        | BodyResponseCallback<Readable>
+    ):
+      | void
+      | GaxiosPromise<Schema$GoogleChromePolicyV1RemoveNetworkResponse>
+      | GaxiosPromise<Readable> {
+      let params = (paramsOrCallback ||
+        {}) as Params$Resource$Customers$Policies$Networks$Removenetwork;
+      let options = (optionsOrCallback || {}) as MethodOptions;
+
+      if (typeof paramsOrCallback === 'function') {
+        callback = paramsOrCallback;
+        params =
+          {} as Params$Resource$Customers$Policies$Networks$Removenetwork;
+        options = {};
+      }
+
+      if (typeof optionsOrCallback === 'function') {
+        callback = optionsOrCallback;
+        options = {};
+      }
+
+      const rootUrl = options.rootUrl || 'https://chromepolicy.googleapis.com/';
+      const parameters = {
+        options: Object.assign(
+          {
+            url: (
+              rootUrl + '/v1/{+customer}/policies/networks:removeNetwork'
+            ).replace(/([^:]\/)\/+/g, '$1'),
+            method: 'POST',
+          },
+          options
+        ),
+        params,
+        requiredParams: ['customer'],
+        pathParams: ['customer'],
+        context: this.context,
+      };
+      if (callback) {
+        createAPIRequest<Schema$GoogleChromePolicyV1RemoveNetworkResponse>(
+          parameters,
+          callback as BodyResponseCallback<unknown>
+        );
+      } else {
+        return createAPIRequest<Schema$GoogleChromePolicyV1RemoveNetworkResponse>(
+          parameters
+        );
+      }
+    }
+  }
+
+  export interface Params$Resource$Customers$Policies$Networks$Definecertificate
+    extends StandardParameters {
+    /**
+     * Required. The customer for which the certificate will apply.
+     */
+    customer?: string;
+
+    /**
+     * Request body metadata
+     */
+    requestBody?: Schema$GoogleChromePolicyV1DefineCertificateRequest;
+  }
+  export interface Params$Resource$Customers$Policies$Networks$Definenetwork
+    extends StandardParameters {
+    /**
+     * Required. The customer who will own this new network.
+     */
+    customer?: string;
+
+    /**
+     * Request body metadata
+     */
+    requestBody?: Schema$GoogleChromePolicyV1DefineNetworkRequest;
+  }
+  export interface Params$Resource$Customers$Policies$Networks$Removecertificate
+    extends StandardParameters {
+    /**
+     * Required. The customer whose certificate will be removed.
+     */
+    customer?: string;
+
+    /**
+     * Request body metadata
+     */
+    requestBody?: Schema$GoogleChromePolicyV1RemoveCertificateRequest;
+  }
+  export interface Params$Resource$Customers$Policies$Networks$Removenetwork
+    extends StandardParameters {
+    /**
+     * Required. The customer whose network will be removed.
+     */
+    customer?: string;
+
+    /**
+     * Request body metadata
+     */
+    requestBody?: Schema$GoogleChromePolicyV1RemoveNetworkRequest;
+  }
+
   export class Resource$Customers$Policies$Orgunits {
     context: APIRequestContext;
     constructor(context: APIRequestContext) {
@@ -1880,7 +2665,7 @@ export namespace chromepolicy_v1 {
     get(
       params?: Params$Resource$Customers$Policyschemas$Get,
       options?: MethodOptions
-    ): GaxiosPromise<Schema$GoogleChromePolicyV1PolicySchema>;
+    ): GaxiosPromise<Schema$GoogleChromePolicyVersionsV1PolicySchema>;
     get(
       params: Params$Resource$Customers$Policyschemas$Get,
       options: StreamMethodOptions | BodyResponseCallback<Readable>,
@@ -1890,32 +2675,32 @@ export namespace chromepolicy_v1 {
       params: Params$Resource$Customers$Policyschemas$Get,
       options:
         | MethodOptions
-        | BodyResponseCallback<Schema$GoogleChromePolicyV1PolicySchema>,
-      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1PolicySchema>
+        | BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1PolicySchema>,
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1PolicySchema>
     ): void;
     get(
       params: Params$Resource$Customers$Policyschemas$Get,
-      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1PolicySchema>
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1PolicySchema>
     ): void;
     get(
-      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1PolicySchema>
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1PolicySchema>
     ): void;
     get(
       paramsOrCallback?:
         | Params$Resource$Customers$Policyschemas$Get
-        | BodyResponseCallback<Schema$GoogleChromePolicyV1PolicySchema>
+        | BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1PolicySchema>
         | BodyResponseCallback<Readable>,
       optionsOrCallback?:
         | MethodOptions
         | StreamMethodOptions
-        | BodyResponseCallback<Schema$GoogleChromePolicyV1PolicySchema>
+        | BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1PolicySchema>
         | BodyResponseCallback<Readable>,
       callback?:
-        | BodyResponseCallback<Schema$GoogleChromePolicyV1PolicySchema>
+        | BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1PolicySchema>
         | BodyResponseCallback<Readable>
     ):
       | void
-      | GaxiosPromise<Schema$GoogleChromePolicyV1PolicySchema>
+      | GaxiosPromise<Schema$GoogleChromePolicyVersionsV1PolicySchema>
       | GaxiosPromise<Readable> {
       let params = (paramsOrCallback ||
         {}) as Params$Resource$Customers$Policyschemas$Get;
@@ -1947,12 +2732,12 @@ export namespace chromepolicy_v1 {
         context: this.context,
       };
       if (callback) {
-        createAPIRequest<Schema$GoogleChromePolicyV1PolicySchema>(
+        createAPIRequest<Schema$GoogleChromePolicyVersionsV1PolicySchema>(
           parameters,
           callback as BodyResponseCallback<unknown>
         );
       } else {
-        return createAPIRequest<Schema$GoogleChromePolicyV1PolicySchema>(
+        return createAPIRequest<Schema$GoogleChromePolicyVersionsV1PolicySchema>(
           parameters
         );
       }
@@ -1990,7 +2775,7 @@ export namespace chromepolicy_v1 {
      *   const res = await chromepolicy.customers.policySchemas.list({
      *     // The schema filter used to find a particular schema based on fields like its resource name, description and `additionalTargetKeyNames`.
      *     filter: 'placeholder-value',
-     *     // The maximum number of policy schemas to return.
+     *     // The maximum number of policy schemas to return, defaults to 100 and has a maximum of 1000.
      *     pageSize: 'placeholder-value',
      *     // The page token used to retrieve a specific page of the listing request.
      *     pageToken: 'placeholder-value',
@@ -2025,7 +2810,7 @@ export namespace chromepolicy_v1 {
     list(
       params?: Params$Resource$Customers$Policyschemas$List,
       options?: MethodOptions
-    ): GaxiosPromise<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>;
+    ): GaxiosPromise<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>;
     list(
       params: Params$Resource$Customers$Policyschemas$List,
       options: StreamMethodOptions | BodyResponseCallback<Readable>,
@@ -2035,32 +2820,32 @@ export namespace chromepolicy_v1 {
       params: Params$Resource$Customers$Policyschemas$List,
       options:
         | MethodOptions
-        | BodyResponseCallback<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>,
-      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>
+        | BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>,
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>
     ): void;
     list(
       params: Params$Resource$Customers$Policyschemas$List,
-      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>
     ): void;
     list(
-      callback: BodyResponseCallback<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>
+      callback: BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>
     ): void;
     list(
       paramsOrCallback?:
         | Params$Resource$Customers$Policyschemas$List
-        | BodyResponseCallback<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>
+        | BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>
         | BodyResponseCallback<Readable>,
       optionsOrCallback?:
         | MethodOptions
         | StreamMethodOptions
-        | BodyResponseCallback<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>
+        | BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>
         | BodyResponseCallback<Readable>,
       callback?:
-        | BodyResponseCallback<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>
+        | BodyResponseCallback<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>
         | BodyResponseCallback<Readable>
     ):
       | void
-      | GaxiosPromise<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>
+      | GaxiosPromise<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>
       | GaxiosPromise<Readable> {
       let params = (paramsOrCallback ||
         {}) as Params$Resource$Customers$Policyschemas$List;
@@ -2095,12 +2880,12 @@ export namespace chromepolicy_v1 {
         context: this.context,
       };
       if (callback) {
-        createAPIRequest<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>(
+        createAPIRequest<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>(
           parameters,
           callback as BodyResponseCallback<unknown>
         );
       } else {
-        return createAPIRequest<Schema$GoogleChromePolicyV1ListPolicySchemasResponse>(
+        return createAPIRequest<Schema$GoogleChromePolicyVersionsV1ListPolicySchemasResponse>(
           parameters
         );
       }
@@ -2121,7 +2906,7 @@ export namespace chromepolicy_v1 {
      */
     filter?: string;
     /**
-     * The maximum number of policy schemas to return.
+     * The maximum number of policy schemas to return, defaults to 100 and has a maximum of 1000.
      */
     pageSize?: number;
     /**
