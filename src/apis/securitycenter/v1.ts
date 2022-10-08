@@ -168,6 +168,10 @@ export namespace securitycenter_v1 {
      * What kind of user agent is associated, e.g. operating system shells, embedded or stand-alone applications, etc.
      */
     userAgentFamily?: string | null;
+    /**
+     * A string representing a username. This is likely not an IAM principal. For instance, this may be the system user name if the finding is VM-related, or this may be some type of application login user name, depending on the type of finding.
+     */
+    username?: string | null;
   }
   /**
    * Conveys information about a Kubernetes access review (e.g. kubectl auth can-i ...) that was involved in a finding.
@@ -840,6 +844,14 @@ export namespace securitycenter_v1 {
    * The response to a BulkMute request. Contains the LRO information.
    */
   export interface Schema$GoogleCloudSecuritycenterV1BulkMuteFindingsResponse {}
+  /**
+   * A resource that is exposed as a result of a finding.
+   */
+  export interface Schema$GoogleCloudSecuritycenterV1ExposedResource {}
+  /**
+   * A path that an attacker could take to reach an exposed resource.
+   */
+  export interface Schema$GoogleCloudSecuritycenterV1ExposurePath {}
   /**
    * Representation of third party SIEM/SOAR fields within SCC.
    */
