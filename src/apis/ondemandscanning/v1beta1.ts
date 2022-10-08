@@ -1392,6 +1392,10 @@ export namespace ondemandscanning_v1beta1 {
      */
     cvssv3?: Schema$CVSS;
     /**
+     * Output only. CVSS version used to populate cvss_score and severity.
+     */
+    cvssVersion?: string | null;
+    /**
      * The distro assigned severity for this vulnerability when it is available, otherwise this is the note provider assigned severity. When there are multiple PackageIssues for this vulnerability, they can have different effective severities because some might be provided by the distro while others are provided by the language ecosystem for a language pack. For this reason, it is advised to use the effective severity on the PackageIssue level. In the case where multiple PackageIssues have differing effective severities, this field should be the highest severity for any of the PackageIssues.
      */
     effectiveSeverity?: string | null;
